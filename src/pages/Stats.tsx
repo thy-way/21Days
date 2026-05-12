@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { format, subDays, parseISO, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useCheckInStore } from '@/store';
-import { CheckIn } from '@/types';
+import { CheckIn, DailySummary } from '@/types';
 import { cn } from '@/utils';
-import { Calendar, Target, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Target, FileText, ChevronLeft, ChevronRight, Save, Edit3, Book } from 'lucide-react';
 
 interface DailyRecord {
   date: string;
@@ -25,11 +25,16 @@ const getCategoryColor = (categoryId: string, categories: { id: string; name: st
 };
 
 export const Stats: React.FC = () => {
-  const { categories, tasks, getDailyStats } = useCheckInStore();
+  const { categories, tasks, getDailyStats, loadDailySummary, saveDailySummary, loadAllSummaries } = useCheckInStore();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [weeklyRecords, setWeeklyRecords] = useState<DailyRecord[]>([]);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedDayCheckIns, setSelectedDayCheckIns] = useState<CheckIn[]>([]);
+  const [dailySummary, setDailySummary] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [allSummaries, setAllSummaries] = useState<DailySummary[]>([]);
+  const [selectedDaySummaries, setSelectedDaySummaries] = useState<DailySummary[]>([]);
 
   // Get week date range
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Monday
@@ -66,6 +71,11 @@ export const Stats: React.FC = () => {
     loadWeeklyData();
   }, [currentWeek, getDailyStats, weekDays]);
 
+  // Load all summaries
+  useEffect(() => {
+    loadAllSummaries().then(setAllSummaries);
+  }, [loadAllSummaries]);
+
   const handlePrevWeek = () => {
     setCurrentWeek(subDays(weekStart, 1));
     setSelectedDay(null);
@@ -78,8 +88,25 @@ export const Stats: React.FC = () => {
 
   const handleDayClick = (date: string) => {
     setSelectedDay(date);
+    setSaved(false);
     const record = weeklyRecords.find(r => r.date === date);
     setSelectedDayCheckIns(record?.checkIns || []);
+    // Store all entries, show latest in editor
+    loadDailySummary(date).then(summaries => {
+      setSelectedDaySummaries(summaries);
+      setDailySummary(summaries.length > 0 ? summaries[0].content : '');
+    });
+  };
+
+  const handleSaveSummary = async () => {
+    if (!selectedDay) return;
+    setIsSaving(true);
+    await saveDailySummary(selectedDay, dailySummary);
+    setIsSaving(false);
+    setDailySummary('');
+    setSaved(true);
+    loadAllSummaries().then(setAllSummaries);
+    setTimeout(() => setSaved(false), 2000);
   };
 
   const getTaskName = (taskId: string) => {
@@ -255,6 +282,77 @@ export const Stats: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {/* Previous Entries for this day */}
+            {selectedDaySummaries.length > 1 && (
+              <div className="mt-4">
+                <h3 className="text-sm font-medium text-gray-500 mb-2">历史提交记录（共 {selectedDaySummaries.length} 条）</h3>
+                <div className="space-y-2">
+                  {selectedDaySummaries.slice(1).map((s, idx) => (
+                    <div key={s.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                      <p className="text-xs text-gray-400 mb-1">#{idx + 2} · {format(new Date(s.updatedAt), 'HH:mm')}</p>
+                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{s.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Daily Summary */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-gray-600 flex items-center gap-1.5">
+                  <Edit3 className="w-4 h-4" />
+                  今日总结
+                </h3>
+                {saved ? (
+                  <span className="text-green-600 text-sm">✅ 保存成功</span>
+                ) : (
+                  <button
+                    onClick={handleSaveSummary}
+                    disabled={isSaving}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors disabled:opacity-50"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    {isSaving ? '保存中...' : '提交'}
+                  </button>
+                )}
+              </div>
+              <textarea
+                value={dailySummary}
+                onChange={(e) => setDailySummary(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                rows={4}
+                placeholder={`记录 ${selectedDay ? format(parseISO(selectedDay), 'M月d日', { locale: zhCN }) : ''} 的收获与反思...`}
+              />
+              <p className="text-xs text-gray-400 mt-1">提交后自动清空，可点击日期查看历史总结</p>
+            </div>
+          </div>
+        )}
+
+        {/* Summary History */}
+        {allSummaries.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-5 mt-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <Book className="w-5 h-5 text-blue-600" />
+              历史总结记录
+            </h2>
+            <div className="space-y-3">
+              {allSummaries.map((s) => (
+                <div
+                  key={s.id}
+                  className="p-4 bg-gray-50 rounded-xl border border-gray-100"
+                >
+                  <div className="flex items-center gap-2 mb-2 text-sm text-gray-500">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {format(parseISO(s.date), 'yyyy年M月d日 EEEE', { locale: zhCN })}
+                  </div>
+                  <p className="text-gray-800 whitespace-pre-wrap text-sm leading-relaxed">
+                    {s.content}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

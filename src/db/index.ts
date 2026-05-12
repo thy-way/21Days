@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie';
-import { CheckIn, Category, Task, QuadrantTask, TomatoSession, TomatoSettings } from '../types';
+import { CheckIn, Category, Task, QuadrantTask, TomatoSession, TomatoSettings, DailySummary } from '../types';
 
 class CheckInDatabase extends Dexie {
   checkIns!: Table<CheckIn, number>;
@@ -8,17 +8,19 @@ class CheckInDatabase extends Dexie {
   quadrants!: Table<QuadrantTask, number>;
   tomatoSessions!: Table<TomatoSession, number>;
   tomatoSettings!: Table<TomatoSettings, number>;
+  dailySummaries!: Table<DailySummary, number>;
 
   constructor() {
     super('DailyCheckDB');
 
-    this.version(8).stores({
+    this.version(9).stores({
       checkIns: '++id, taskId, categoryId, date, timestamp',
       categories: 'id, name, enabled',
       tasks: 'id, categoryId, name, enabled, order, quadrant',
       quadrants: '++id, urgency, importance, status, dueDate, createdAt',
       tomatoSessions: '++id, taskId, type, completed, startDate',
       tomatoSettings: '++id',
+      dailySummaries: '++id, date',
     });
   }
 }

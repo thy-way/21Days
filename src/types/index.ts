@@ -118,3 +118,13 @@ export interface TomatoSettings {
   autoStartPomodoros: boolean;
   soundEnabled: boolean;
 }
+
+// ============ 每日复盘 ============
+
+export interface DailySummary {
+  id?: number;
+  date: string;
+  content: string;
+  createdAt: number;
+  updatedAt: number;
+}

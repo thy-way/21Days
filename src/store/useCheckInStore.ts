@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { db, initializeDatabase } from '../db';
-import { CheckIn, CategoryId, DailyStats, WeeklyStats, Category, Task, QuadrantType } from '../types';
+import { CheckIn, CategoryId, DailyStats, WeeklyStats, Category, Task, QuadrantType, DailySummary } from '../types';
 import { DEFAULT_CATEGORIES, DEFAULT_TASKS } from '../types/categories';
 import {
   format,
@@ -31,6 +31,9 @@ interface CheckInState {
   getWeeklyStats: (date?: Date) => Promise<WeeklyStats>;
   calculateStreak: () => Promise<number>;
   updateTaskQuadrant: (taskId: string, quadrant: QuadrantType | undefined) => Promise<void>;
+  loadDailySummary: (date: string) => Promise<DailySummary[]>;
+  saveDailySummary: (date: string, content: string) => Promise<void>;
+  loadAllSummaries: () => Promise<DailySummary[]>;
 }
 
 export const useCheckInStore = create<CheckInState>((set, get) => ({
@@ -205,5 +208,18 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
   updateTaskQuadrant: async (taskId: string, quadrant: QuadrantType | undefined) => {
     await db.tasks.update(taskId, { quadrant });
     await get().loadTasks();
+  },
+
+  loadDailySummary: async (date: string) => {
+    return await db.dailySummaries.where('date').equals(date).reverse().toArray();
+  },
+
+  saveDailySummary: async (date: string, content: string) => {
+    const now = Date.now();
+    await db.dailySummaries.add({ date, content, createdAt: now, updatedAt: now });
+  },
+
+  loadAllSummaries: async () => {
+    return await db.dailySummaries.orderBy('date').reverse().toArray();
   },
 }));

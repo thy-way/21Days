@@ -1,12 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Target, Timer, BarChart2, Settings } from 'lucide-react';
+import { BookOpen, CheckSquare, BarChart2, Settings } from 'lucide-react';
 import { cn } from '@/utils';
 
 const navItems = [
-  { to: '/', icon: Home, label: '打卡' },
-  { to: '/plan', icon: Target, label: '计划' },
-  { to: '/tomato', icon: Timer, label: '番茄' },
+  { to: '/', icon: BookOpen, label: '计划' },
+  { to: '/checkin', icon: CheckSquare, label: '打卡' },
   { to: '/stats', icon: BarChart2, label: '复盘' },
 ];
 
@@ -50,7 +49,7 @@ export const BottomNav: React.FC = () => {
             </NavLink>
           ))}
           
-          {/* Settings / Logout button */}
+          {/* Settings */}
           <NavLink
             to="/settings"
             className={({ isActive }) =>

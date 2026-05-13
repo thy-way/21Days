@@ -4,7 +4,7 @@ import { Dialog } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
 import { CATEGORY_STYLES } from '@/utils/categoryStyles';
 import { cn } from '@/utils';
-import { Download, Upload, Trash2, AlertTriangle, Flame, LogOut, Camera, Edit2 } from 'lucide-react';
+import { Download, Upload, Trash2, AlertTriangle, Flame, LogOut, Camera, Edit2, Settings as SettingsIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Settings: React.FC = () => {
@@ -51,7 +51,7 @@ export const Settings: React.FC = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `dailycheck-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `21days-backup-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
@@ -114,7 +114,12 @@ export const Settings: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">⚙️ 设置</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="p-2.5 bg-gradient-to-br from-gray-600 to-slate-700 rounded-xl shadow-sm">
+              <SettingsIcon className="w-6 h-6 text-white" />
+            </div>
+            设置
+          </h1>
           <p className="text-gray-600 mt-1">自定义你的打卡体验</p>
         </div>
 

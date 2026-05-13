@@ -794,15 +794,7 @@ export const Home: React.FC = () => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailTask, setDetailTask] = useState<Task | null>(null);
-  const [dailyQuote, setDailyQuote] = useState(ENCOURAGING_MESSAGES[Math.floor(Math.random() * ENCOURAGING_MESSAGES.length)]);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDailyQuote(ENCOURAGING_MESSAGES[Math.floor(Math.random() * ENCOURAGING_MESSAGES.length)]);
-    }, 10000); // 每10秒切换一次
-    return () => clearInterval(interval);
-  }, []);
 
   const handleCheckIn = (task: Task) => {
     setSelectedTask(task);
@@ -850,116 +842,99 @@ export const Home: React.FC = () => {
   }).length;
 
   const today = new Date();
-  const dayOfWeek = format(today, 'EEEE', { locale: zhCN });
-  const isWeekend = dayOfWeek === '星期六' || dayOfWeek === '星期日';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100">
-      <header className={cn(
-        'text-white px-4 sm:px-6 py-5 sm:py-7',
-        'bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900',
-        'shadow-2xl'
-      )}>
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <div>
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <Zap className="w-6 sm:w-8 h-6 sm:h-8 text-yellow-400" />
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  今日打卡
-                </h1>
-              </div>
-              <p className="text-blue-200 mt-1 sm:mt-2 text-sm sm:text-lg">
-                {format(today, 'yyyy年M月d日 EEEE', { locale: zhCN })}
-                {isWeekend && <span className="ml-2 px-2 py-0.5 bg-yellow-500/30 rounded-full text-xs">周末</span>}
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+      {/* Header */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="p-2.5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-sm">
+              <Zap className="w-6 h-6 text-white" />
             </div>
-            <div className="text-right">
-              <div className="flex items-center space-x-1 sm:space-x-2 text-orange-400">
-                <Flame className="w-5 sm:w-7 h-5 sm:h-7" />
-                <span className="text-3xl sm:text-4xl font-bold">{streak}</span>
-              </div>
-              <p className="text-blue-200 text-xs sm:text-sm">连续打卡天数</p>
+            21Days<span className="text-sm text-gray-400 font-normal ml-1">今日打卡</span>
+            <div className="flex items-center gap-1.5 text-base ml-auto text-orange-500">
+              <Flame className="w-5 h-5" />
+              <span className="font-bold">{streak}</span>
+              <span className="text-gray-400 font-normal">天</span>
             </div>
-          </div>
+          </h1>
+          <p className="text-gray-500 mt-1">{format(today, 'yyyy年M月d日 EEEE', { locale: zhCN })}</p>
+        </div>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-5 border border-white/10">
-            <div className="flex items-center justify-between mb-2 sm:mb-3">
-              <div className="flex items-center space-x-2">
-                <Star className="w-4 sm:w-5 h-4 sm:h-5 text-yellow-400" />
-                <span className="text-blue-100 text-sm sm:text-base">今日进度</span>
-              </div>
-              <span className="text-white font-bold text-sm sm:text-base">
-                {completedTasks}/{totalTasks} 项
-              </span>
+        {/* Progress Card */}
+        <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-yellow-500" />
+              <span className="font-medium text-gray-800">今日进度</span>
             </div>
-            <div className="w-full bg-white/20 rounded-full h-2.5 sm:h-3 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 transition-all duration-700 shadow-lg"
-                style={{ width: `${totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0}%` }}
-              />
-            </div>
-            <div className="flex justify-between mt-1.5 text-xs text-blue-300">
-              <span>已完成 {Math.round(totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0)}%</span>
-              <span>{completedTasks === totalTasks && totalTasks > 0 ? '🎉 全部完成！' : '加油！'}</span>
-            </div>
-            <div className={`mt-3 pt-3 border-t border-white/10 flex items-center ${dailyQuote.color}`}>
-              {React.createElement(dailyQuote.icon, { className: "w-4 h-4 mr-2" })}
-              <span className="text-sm font-medium">{dailyQuote.text}</span>
-            </div>
+            <span className="font-bold text-gray-800">{completedTasks}/{totalTasks} 项</span>
+          </div>
+          <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 transition-all duration-700"
+              style={{ width: `${totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0}%` }}
+            />
+          </div>
+          <div className="flex justify-between mt-2 text-sm text-gray-500">
+            <span>已完成 {Math.round(totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0)}%</span>
+            <span>{completedTasks === totalTasks && totalTasks > 0 ? '🎉 全部完成！' : '加油！'}</span>
           </div>
         </div>
-      </header>
 
-      {/* 四象限法则区域 */}
-      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          {QUADRANTS.map((quadrant) => {
-            const quadrantTasks = tasks.filter(t => t.quadrant === quadrant.id);
-            return (
-              <div
-                key={quadrant.id}
-                onDragOver={handleDragOver}
-                onDrop={() => handleDrop(quadrant.id)}
-                className={cn(
-                  'rounded-xl p-3 sm:p-4 border-2 transition-all min-h-[100px]',
-                  quadrant.bg,
-                  quadrant.border,
-                  draggedTask ? 'ring-2 ring-blue-400 ring-opacity-50' : ''
-                )}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center">
-                    <span className="text-lg mr-2">{quadrant.icon}</span>
-                    <span className="font-semibold text-sm sm:text-base text-gray-800">{quadrant.title}</span>
-                  </div>
-                  <span className="text-xs text-gray-500">{quadrantTasks.length}</span>
-                </div>
-                <p className="text-xs text-gray-500 mb-2">{quadrant.desc}</p>
-                <div className="space-y-1 max-h-[80px] overflow-y-auto">
-                  {quadrantTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      draggable
-                      onDragStart={() => handleDragStart(task)}
-                      className="flex items-center justify-between bg-white rounded-lg px-2 py-1 text-xs shadow-sm border border-gray-100 cursor-move"
-                    >
-                      <span className="truncate">{task.name}</span>
-                    </div>
-                  ))}
-                  {quadrantTasks.length === 0 && (
-                    <div className="text-center text-gray-300 text-xs py-2">
-                      拖拽任务到此处
-                    </div>
+        {/* 四象限法则 */}
+        <div className="mb-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+            <Target className="w-5 h-5 mr-2 text-blue-600" />
+            四象限法则
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            {QUADRANTS.map((quadrant) => {
+              const quadrantTasks = tasks.filter(t => t.quadrant === quadrant.id);
+              return (
+                <div
+                  key={quadrant.id}
+                  onDragOver={handleDragOver}
+                  onDrop={() => handleDrop(quadrant.id)}
+                  className={cn(
+                    'bg-white rounded-xl p-3 sm:p-4 border-2 transition-all min-h-[100px] shadow-sm',
+                    quadrant.border,
+                    draggedTask ? 'ring-2 ring-blue-400' : ''
                   )}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1.5">
+                      <span>{quadrant.icon}</span>
+                      <span className="font-semibold text-sm text-gray-800">{quadrant.title}</span>
+                    </div>
+                    <span className="text-xs text-gray-400">{quadrantTasks.length}</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mb-2">{quadrant.desc}</p>
+                  <div className="space-y-1 max-h-[80px] overflow-y-auto">
+                    {quadrantTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        draggable
+                        onDragStart={() => handleDragStart(task)}
+                        className="flex items-center justify-between bg-gray-50 rounded-lg px-2 py-1 text-xs shadow-sm cursor-move hover:bg-gray-100"
+                      >
+                        <span className="truncate text-gray-700">{task.name}</span>
+                      </div>
+                    ))}
+                    {quadrantTasks.length === 0 && (
+                      <div className="text-center text-gray-300 text-xs py-2">
+                        拖拽任务到此处
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+        {/* Categories */}
         {enabledCategories.map((category) => {
           const categoryTasks = tasks.filter((t) => t.categoryId === category.id);
           const categoryCheckIns = todayCheckIns.filter((ci) => ci.categoryId === category.id);

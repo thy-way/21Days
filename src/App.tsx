@@ -4,8 +4,6 @@ import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Stats } from './pages/Stats';
 import { Settings } from './pages/Settings';
-import { Quadrants } from './pages/Quadrants';
-import { Tomato } from './pages/Tomato';
 import { Plan } from './pages/Plan';
 import { Login } from './pages/Login';
 
@@ -34,10 +32,8 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Home />} />
-          <Route path="plan" element={<Plan />} />
-          <Route path="quadrants" element={<Quadrants />} />
-          <Route path="tomato" element={<Tomato />} />
+          <Route index element={<Plan />} />
+          <Route path="checkin" element={<Home />} />
           <Route path="stats" element={<Stats />} />
           <Route path="settings" element={<Settings />} />
         </Route>

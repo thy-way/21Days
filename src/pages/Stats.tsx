@@ -4,7 +4,7 @@ import { zhCN } from 'date-fns/locale';
 import { useCheckInStore } from '@/store';
 import { CheckIn, DailySummary } from '@/types';
 import { cn } from '@/utils';
-import { Calendar, Target, FileText, ChevronLeft, ChevronRight, Save, Edit3, Book } from 'lucide-react';
+import { Calendar, Target, FileText, ChevronLeft, ChevronRight, Save, Edit3, Book, TrendingUp } from 'lucide-react';
 
 interface DailyRecord {
   date: string;
@@ -124,7 +124,12 @@ export const Stats: React.FC = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">📋 复盘总结</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="p-2.5 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl shadow-sm">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            复盘总结
+          </h1>
           <p className="text-gray-600 mt-1">回顾每日打卡，分析成长轨迹</p>
         </div>
 

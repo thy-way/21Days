@@ -128,3 +128,41 @@ export interface DailySummary {
   createdAt: number;
   updatedAt: number;
 }
+
+// ============ 用户计划 ============
+
+export interface UserPlanTask {
+  id: string;
+  name: string;
+  learningRoute: string[];
+  resources?: { name: string; url?: string }[];
+  quadrant?: QuadrantType;
+}
+
+export interface UserPlan {
+  id?: number;
+  title: string;
+  categoryId: CategoryId;
+  type: 'ai-generated' | 'custom';
+  description: string;
+  isActive: boolean;
+  tasks: UserPlanTask[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface AIQuestion {
+  key: string;
+  question: string;
+  type: 'single' | 'multi';
+  options: { label: string; value: string }[];
+}
+
+export interface AITemplate {
+  id: string;
+  categoryId: CategoryId;
+  name: string;
+  description: string;
+  questions: AIQuestion[];
+  generatePlan: (answers: Record<string, string>) => { title: string; tasks: UserPlanTask[] };
+}

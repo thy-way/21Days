@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
-import { Lock, User, Sparkles } from 'lucide-react';
+import { Lock, User } from 'lucide-react';
 
 const motivationalQuotes = [
   '日日行，不怕千万里；常常做，不怕千万事。',
@@ -62,11 +62,11 @@ export const Login: React.FC = () => {
       <div className="relative w-full max-w-md">
         {/* Logo / Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-lg rounded-2xl mb-4">
-            <Sparkles className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center w-22 h-22 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 backdrop-blur-lg rounded-3xl mb-4 shadow-xl">
+            <span className="text-3xl font-bold text-white tracking-tight">21</span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">今日打卡</h1>
-          <p className="text-white/80 text-lg">记录每一天的成长</p>
+          <h1 className="text-4xl font-bold text-white mb-1">21Days</h1>
+          <p className="text-white/80 text-lg">21天习惯养成计划</p>
         </div>
 
         {/* Login Form */}

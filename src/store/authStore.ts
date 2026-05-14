@@ -12,6 +12,7 @@ interface UserProfile {
 interface AuthState {
   isLoggedIn: boolean;
   profile: UserProfile;
+  loginDates: string[];
   login: (username: string) => void;
   logout: () => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
@@ -34,15 +35,21 @@ export const useAuthStore = create<AuthState>()(
         phone: '',
         email: '',
       },
-      login: (username: string) => set({ 
-        isLoggedIn: true, 
-        profile: { 
-          username, 
-          avatar: DEFAULT_AVATARS[Math.floor(Math.random() * DEFAULT_AVATARS.length)],
-          bio: '',
-          phone: '',
-          email: '' 
-        } 
+      loginDates: [],
+      login: (username: string) => set((state) => {
+        const today = new Date().toISOString().split('T')[0];
+        const dates = state.loginDates.includes(today) ? state.loginDates : [...state.loginDates, today];
+        return {
+          isLoggedIn: true,
+          loginDates: dates,
+          profile: {
+            username,
+            avatar: DEFAULT_AVATARS[Math.floor(Math.random() * DEFAULT_AVATARS.length)],
+            bio: '',
+            phone: '',
+            email: ''
+          }
+        };
       }),
       logout: () => set({ 
         isLoggedIn: false, 

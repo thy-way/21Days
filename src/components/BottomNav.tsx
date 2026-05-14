@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { BookOpen, CheckSquare, BarChart2, Settings } from 'lucide-react';
+import { BookOpen, CheckSquare, LayoutGrid, BarChart2, Settings } from 'lucide-react';
 import { cn } from '@/utils';
 
 const navItems = [
   { to: '/', icon: BookOpen, label: '计划' },
   { to: '/checkin', icon: CheckSquare, label: '打卡' },
+  { to: '/categories', icon: LayoutGrid, label: '任务' },
   { to: '/stats', icon: BarChart2, label: '复盘' },
 ];
 

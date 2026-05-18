@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { db } from '../db';
 import { UserPlan, UserPlanTask, CategoryId } from '../types';
 import { AI_TEMPLATES } from '../data/aiTemplates';
+import { generatePlanFromAI } from '../services/ai';
 
 interface PlanState {
   plans: UserPlan[];
@@ -11,7 +12,7 @@ interface PlanState {
   updatePlan: (id: number, updates: Partial<UserPlan>) => Promise<void>;
   deletePlan: (id: number) => Promise<void>;
   getTemplatesByCategory: (categoryId: CategoryId) => typeof AI_TEMPLATES;
-  generateAIPlan: (templateId: string, answers: Record<string, string>) => { title: string; tasks: UserPlanTask[] };
+  generateAIPlan: (templateId: string, answers: Record<string, string>) => Promise<{ title: string; tasks: UserPlanTask[] }>;
   createCustomPlan: () => UserPlan;
 }
 
@@ -46,10 +47,16 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     return AI_TEMPLATES.filter(t => t.categoryId === categoryId);
   },
 
-  generateAIPlan: (templateId: string, answers: Record<string, string>) => {
+  generateAIPlan: async (templateId: string, answers: Record<string, string>) => {
     const template = AI_TEMPLATES.find(t => t.id === templateId);
     if (!template) return { title: '默认计划', tasks: [] };
-    return template.generatePlan(answers);
+    try {
+      const result = await generatePlanFromAI(template, answers, template.categoryId);
+      return result;
+    } catch (err: any) {
+      console.warn('AI API 调用失败，使用本地模板生成:', err.message);
+      return template.generatePlan(answers);
+    }
   },
 
   createCustomPlan: () => {

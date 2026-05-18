@@ -34,6 +34,7 @@ interface CheckInState {
   loadDailySummary: (date: string) => Promise<DailySummary[]>;
   saveDailySummary: (date: string, content: string) => Promise<void>;
   loadAllSummaries: () => Promise<DailySummary[]>;
+  updateCheckInComment: (checkInId: number, comment: string) => Promise<void>;
 }
 
 export const useCheckInStore = create<CheckInState>((set, get) => ({
@@ -221,5 +222,10 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
 
   loadAllSummaries: async () => {
     return await db.dailySummaries.orderBy('date').reverse().toArray();
+  },
+
+  updateCheckInComment: async (checkInId: number, comment: string) => {
+    await db.checkIns.update(checkInId, { comment });
+    await get().loadTodayCheckIns();
   },
 }));

@@ -312,7 +312,11 @@ export const Home: React.FC = () => {
   };
 
   const totalTasks = plans.filter(p => p.isActive).flatMap(p => p.tasks).length;
-  const completedTasks = tasks.filter((t) => t.enabled && todayCheckIns.some((ci) => ci.taskId === t.id)).length;
+  const completedTasks = plans
+    .filter(p => p.isActive)
+    .flatMap(p => p.tasks.map(t => ({ planId: p.id, task: t })))
+    .filter(({ planId, task }) => todayCheckIns.some(ci => ci.taskId === `plan-${planId}-${task.name}`))
+    .length;
   const today = new Date();
 
   return (

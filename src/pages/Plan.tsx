@@ -66,6 +66,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
     title: string;
     tasks: UserPlanTask[];
   } | null>(null);
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -74,6 +75,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
       setSelectedTemplate(null);
       setAnswers({});
       setGenerated(null);
+      setGenerating(false);
     }
   }, [open]);
 
@@ -96,12 +98,19 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
     }
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!selectedTemplate) return;
-    const { generateAIPlan } = usePlanStore.getState();
-    const result = generateAIPlan(selectedTemplate, answers);
-    setGenerated(result);
-    setStep(4);
+    setGenerating(true);
+    try {
+      const { generateAIPlan } = usePlanStore.getState();
+      const result = await generateAIPlan(selectedTemplate, answers);
+      setGenerated(result);
+      setStep(4);
+    } catch (err: any) {
+      alert('生成失败：' + (err.message || '未知错误'));
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleSave = async () => {
@@ -433,13 +442,23 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
               <button
                 onClick={handleGenerate}
                 disabled={
+                  generating ||
                   !currentTemplate ||
                   currentTemplate.questions.some((q) => !answers[q.key])
                 }
                 className="px-5 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                <Sparkles className="w-4 h-4" />
-                生成计划
+                {generating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    生成中...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    生成计划
+                  </>
+                )}
               </button>
             )}
             {step === 4 && (
@@ -1058,20 +1077,23 @@ export const Plan: React.FC = () => {
   const [routesExpanded, setRoutesExpanded] = useState(false);
   const [selectedRouteCategory, setSelectedRouteCategory] =
     useState<string>("all");
+  const [selectedModule, setSelectedModule] = useState<string>("all");
 
   useEffect(() => {
     loadPlans();
   }, [loadPlans]);
 
   const filteredRouteTasks =
-    selectedRouteCategory === "all"
-      ? tasks.filter((t) => t.learningRoute && t.learningRoute.length > 0)
-      : tasks.filter(
-          (t) =>
-            t.categoryId === selectedRouteCategory &&
-            t.learningRoute &&
-            t.learningRoute.length > 0
-        );
+    selectedModule !== "all"
+      ? tasks.filter((t) => t.categoryId === selectedModule && t.learningRoute && t.learningRoute.length > 0)
+      : selectedRouteCategory === "all"
+        ? tasks.filter((t) => t.learningRoute && t.learningRoute.length > 0)
+        : tasks.filter(
+            (t) =>
+              t.categoryId === selectedRouteCategory &&
+              t.learningRoute &&
+              t.learningRoute.length > 0
+          );
 
   const routeTasksByCategory = filteredRouteTasks.reduce((acc, task) => {
     if (!acc[task.categoryId]) {
@@ -1082,6 +1104,7 @@ export const Plan: React.FC = () => {
   }, {} as Record<string, typeof filteredRouteTasks>);
 
   const plansByCategory = plans.reduce((acc, plan) => {
+    if (selectedModule !== "all" && plan.categoryId !== selectedModule) return acc;
     if (!acc[plan.categoryId]) {
       acc[plan.categoryId] = [];
     }
@@ -1147,7 +1170,25 @@ export const Plan: React.FC = () => {
           </div>
         </div>
 
-        {/* My Plans Section */}
+        {/* Module Tab Bar */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
+          <button onClick={() => setSelectedModule("all")}
+            className={cn("px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all",
+              selectedModule === "all" ? "bg-blue-600 text-white shadow-md" : "bg-white text-gray-600 hover:bg-gray-50"
+            )}>
+            全部
+          </button>
+          {categories.map((cat) => (
+            <button key={cat.id} onClick={() => setSelectedModule(cat.id)}
+              className={cn("px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5",
+                selectedModule === cat.id ? "bg-blue-600 text-white shadow-md" : "bg-white text-gray-600 hover:bg-gray-50"
+              )}>
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Filtered Plans */}
         {plans.length > 0 && (
           <div className="mb-8">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -1224,7 +1265,8 @@ export const Plan: React.FC = () => {
 
           {routesExpanded && (
             <div className="mt-4">
-              {/* Category filter */}
+              {/* Category filter - only show when "全部" module selected */}
+              {selectedModule === "all" && (
               <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
                 <button
                   onClick={() => setSelectedRouteCategory("all")}
@@ -1255,6 +1297,7 @@ export const Plan: React.FC = () => {
                   );
                 })}
               </div>
+              )}
 
               {/* Tasks by category */}
               {Object.entries(routeTasksByCategory).map(

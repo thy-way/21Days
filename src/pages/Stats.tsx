@@ -25,7 +25,7 @@ const getCategoryColor = (categoryId: string, categories: { id: string; name: st
 };
 
 export const Stats: React.FC = () => {
-  const { categories, tasks, getDailyStats, loadDailySummary, saveDailySummary, loadAllSummaries } = useCheckInStore();
+  const { categories, tasks, getDailyStats, loadDailySummary, saveDailySummary, loadAllSummaries, updateCheckInComment } = useCheckInStore();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [weeklyRecords, setWeeklyRecords] = useState<DailyRecord[]>([]);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
@@ -35,6 +35,8 @@ export const Stats: React.FC = () => {
   const [saved, setSaved] = useState(false);
   const [allSummaries, setAllSummaries] = useState<DailySummary[]>([]);
   const [selectedDaySummaries, setSelectedDaySummaries] = useState<DailySummary[]>([]);
+  const [editingComments, setEditingComments] = useState<Record<number, string>>({});
+  const [savingCommentId, setSavingCommentId] = useState<number | null>(null);
 
   // Get week date range
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Monday
@@ -89,6 +91,7 @@ export const Stats: React.FC = () => {
   const handleDayClick = (date: string) => {
     setSelectedDay(date);
     setSaved(false);
+    setEditingComments({});
     const record = weeklyRecords.find(r => r.date === date);
     setSelectedDayCheckIns(record?.checkIns || []);
     // Store all entries, show latest in editor
@@ -107,6 +110,22 @@ export const Stats: React.FC = () => {
     setSaved(true);
     loadAllSummaries().then(setAllSummaries);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleSaveComment = async (checkInId: number) => {
+    const text = editingComments[checkInId];
+    if (!text?.trim()) return;
+    setSavingCommentId(checkInId);
+    await updateCheckInComment(checkInId, text.trim());
+    setSavingCommentId(null);
+    setSelectedDayCheckIns(prev =>
+      prev.map(ci => (ci.id === checkInId ? { ...ci, comment: text.trim() } : ci))
+    );
+    setEditingComments(prev => {
+      const next = { ...prev };
+      delete next[checkInId];
+      return next;
+    });
   };
 
   const getTaskName = (taskId: string) => {
@@ -228,39 +247,64 @@ export const Stats: React.FC = () => {
               </div>
             </div>
 
-            {selectedDayCheckIns.length > 0 ? (
-              <div className="space-y-3">
-                {selectedDayCheckIns.map((checkIn, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl"
-                  >
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: getCategoryColor(checkIn.categoryId, categories as any) }}
-                    />
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-800">
-                        {getTaskName(checkIn.taskId)}
+            {(() => {
+              const isTodaySelected = selectedDay === format(new Date(), 'yyyy-MM-dd');
+              return selectedDayCheckIns.length > 0 ? (
+                <div className="space-y-3">
+                  {selectedDayCheckIns.map((checkIn, idx) => {
+                    return (
+                      <div key={idx}>
+                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: getCategoryColor(checkIn.categoryId, categories as any) }}
+                          />
+                          <div className="flex-1">
+                            <div className="font-medium text-gray-800">
+                              {getTaskName(checkIn.taskId)}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {getCategoryName(checkIn.categoryId, categories as any)}
+                              {checkIn.duration && ` · ${checkIn.duration}分钟`}
+                              {checkIn.note && ` · ${checkIn.note}`}
+                            </div>
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            {format(new Date(checkIn.timestamp), 'HH:mm')}
+                          </div>
+                        </div>
+                        <div className="ml-7 mt-1">
+                          {isTodaySelected && !checkIn.comment ? (
+                            <div className="flex gap-2">
+                              <input
+                                value={editingComments[checkIn.id!] ?? ''}
+                                onChange={(e) => setEditingComments(prev => ({ ...prev, [checkIn.id!]: e.target.value }))}
+                                placeholder="添加评论..."
+                                className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                              <button
+                                onClick={() => handleSaveComment(checkIn.id!)}
+                                disabled={savingCommentId === checkIn.id || !(editingComments[checkIn.id!] ?? '').trim()}
+                                className="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors disabled:opacity-50"
+                              >
+                                保存
+                              </button>
+                            </div>
+                          ) : checkIn.comment ? (
+                            <div className="text-sm text-gray-500 italic">💬 {checkIn.comment}</div>
+                          ) : null}
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {getCategoryName(checkIn.categoryId, categories as any)}
-                        {checkIn.duration && ` · ${checkIn.duration}分钟`}
-                        {checkIn.note && ` · ${checkIn.note}`}
-                      </div>
-                    </div>
-                    <div className="text-sm text-gray-400">
-                      {format(new Date(checkIn.timestamp), 'HH:mm')}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-400">
-                <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>当日无打卡记录</p>
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-400">
+                  <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>当日无打卡记录</p>
+                </div>
+              );
+            })()}
 
             {/* Category Summary */}
             {selectedDayCheckIns.length > 0 && (

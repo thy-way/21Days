@@ -14,7 +14,26 @@ export interface Task {
   description?: string;
   learningRoute?: string[];
   resources?: { name: string; url?: string }[];
-  quadrant?: QuadrantType; // 四象限分配
+  projects?: {
+    name: string;
+    learningRoute: string[];
+    resources?: { name: string; url?: string }[];
+  }[];
+  quadrant?: QuadrantType;
+}
+
+export interface CheckIn {
+  id?: number;
+  taskId: string;
+  categoryId: CategoryId;
+  date: string;
+  timestamp: number;
+  note?: string;
+  duration?: number;
+  quantity?: number;
+  photo?: string;
+  comment?: string;
+  createdAt: number;
 }
 
 export interface CheckIn {

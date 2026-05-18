@@ -8,13 +8,12 @@ import {
   Coffee, Terminal, FileCode, Layout, Binary, Heart, Activity,
   Camera, Sparkles, Video, Rocket, Users, Search, Package,
   Clock, Flame, Check, X, Star, Target, Zap, Box, Pen,
-  Play, Pause, Monitor,
+  Monitor,
 } from 'lucide-react';
-import { useCheckInStore } from '@/store';
-import { Task } from '@/types';
-import { DEFAULT_TASKS } from '@/types/categories';
+import { useCheckInStore, usePlanStore } from '@/store';
+import { Task, UserPlanTask, UserPlan } from '@/types';
 import { cn } from '@/utils';
-import { getCategoryStyles } from '@/utils/categoryStyles';
+import { getCategoryStyles, CATEGORY_STYLES } from '@/utils/categoryStyles';
 
 const ENCOURAGING_MESSAGES = [
   '今天的努力是明天的基石 💪',
@@ -385,162 +384,6 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
   );
 };
 
-// ===================== TomatoTimer =====================
-
-interface TomatoTimerProps {
-  taskName: string;
-  onCheckIn: (duration: number) => void;
-  onClose: () => void;
-}
-
-const TIME_OPTIONS = [
-  { label: '15m', value: 15 },
-  { label: '25m', value: 25 },
-  { label: '30m', value: 30 },
-  { label: '45m', value: 45 },
-  { label: '60m', value: 60 },
-];
-
-const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, onClose }) => {
-  const [duration, setDuration] = useState(25);
-  const [remaining, setRemaining] = useState(25 * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [completed, setCompleted] = useState(false);
-  const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, []);
-
-  const startTimer = () => {
-    setIsRunning(true);
-    intervalRef.current = setInterval(() => {
-      setRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(intervalRef.current!);
-          setIsRunning(false);
-          setCompleted(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const pauseTimer = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    setIsRunning(false);
-  };
-
-  const handleUseDuration = (mins: number) => {
-    if (isRunning) pauseTimer();
-    setDuration(mins);
-    setRemaining(mins * 60);
-    setCompleted(false);
-  };
-
-  const handleFinish = () => {
-    const elapsed = duration * 60 - remaining;
-    const actualMinutes = Math.max(1, Math.round(elapsed / 60));
-    onCheckIn(actualMinutes);
-    onClose();
-  };
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
-  const progress = 1 - remaining / (duration * 60);
-  const circumference = 2 * Math.PI * 54;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
-        <div className="bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 p-6 text-white text-center">
-          <button onClick={onClose} className="absolute top-4 right-4 p-1 text-white/80 hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
-          <div className="text-3xl mb-1">{'🍅'}</div>
-          <h3 className="text-lg font-bold">{'番茄专注'}</h3>
-        </div>
-
-        <div className="p-6 text-center">
-          <p className="text-sm text-gray-500 mb-4 truncate">{taskName}</p>
-
-          <div className="relative w-36 h-36 mx-auto mb-4">
-            <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="54" fill="none" stroke="#f3f4f6" strokeWidth="6" />
-              <circle
-                cx="60" cy="60" r="54"
-                fill="none"
-                stroke="url(#g)"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={circumference * (1 - progress)}
-                className="transition-all duration-1000"
-              />
-              <defs>
-                <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#f43f5e" /><stop offset="100%" stopColor="#f97316" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold text-gray-800">{formatTime(remaining)}</span>
-              <span className="text-xs text-gray-500">{completed ? '已完成' : isRunning ? '专注中' : '准备就绪'}</span>
-            </div>
-          </div>
-
-          {!isRunning && !completed && (
-            <div className="flex gap-1.5 justify-center mb-4 flex-wrap">
-              {TIME_OPTIONS.map((opt) => (
-                <button key={opt.value} onClick={() => handleUseDuration(opt.value)}
-                  className={cn('px-2.5 py-1 rounded-lg text-xs font-medium transition-all',
-                    duration === opt.value ? 'bg-red-100 text-red-700 ring-2 ring-red-300' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  )}>
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {completed ? (
-            <div className="space-y-3">
-              <div className="flex items-center justify-center gap-2 text-green-600">
-                <Check className="w-5 h-5" /><span className="font-medium">{'专注完成！'}</span>
-              </div>
-              <button onClick={handleFinish}
-                className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:opacity-90 transition-opacity">
-                {'记录并打卡'}
-              </button>
-            </div>
-          ) : isRunning ? (
-            <div className="flex gap-3">
-              <button onClick={pauseTimer}
-                className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
-                <Pause className="w-4 h-4" />{'暂停'}
-              </button>
-              <button onClick={handleFinish}
-                className="flex-1 py-3 bg-red-50 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors">
-                {'完成'}
-              </button>
-            </div>
-          ) : (
-            <button onClick={startTimer}
-              className="w-full py-3 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-              <Play className="w-4 h-4" />{'开始专注'}
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // ===================== ProjectPopup =====================
 
 interface ProjectPopupProps {
@@ -552,10 +395,11 @@ interface ProjectPopupProps {
 }
 
 const ProjectPopup: React.FC<ProjectPopupProps> = ({ open, onClose, subModuleId, checkedInTaskIds, onCheckIn }) => {
+  const { tasks } = useCheckInStore();
   if (!open) return null;
 
   const projectTaskIds = SUB_MODULE_PROJECT_MAP[subModuleId] || [];
-  const projectTasks = DEFAULT_TASKS.filter(t => projectTaskIds.includes(t.id));
+  const projectTasks = tasks.filter(t => projectTaskIds.includes(t.id));
 
   if (projectTasks.length === 0) {
     return (
@@ -695,38 +539,176 @@ const ProjectPopup: React.FC<ProjectPopupProps> = ({ open, onClose, subModuleId,
   );
 };
 
+// ===================== PlanTaskDetailDialog =====================
+
+interface PlanTaskDetailDialogProps {
+  open: boolean;
+  onClose: () => void;
+  plan: UserPlan | null;
+  task: UserPlanTask | null;
+}
+
+const PlanTaskDetailDialog: React.FC<PlanTaskDetailDialogProps> = ({ open, onClose, plan, task }) => {
+  if (!open || !task || !plan) return null;
+
+  const style = CATEGORY_STYLES[plan.categoryId] || CATEGORY_STYLES.coding;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white z-10 p-6 pb-4 border-b border-gray-100">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg font-bold", style.bg)}>
+                {plan.title.charAt(0)}
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">{task.name}</h3>
+                <p className="text-sm text-gray-500 mt-0.5">来自计划：{plan.title}</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {task.learningRoute && task.learningRoute.length > 0 && (
+            <div>
+              <h4 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <Target className="w-4 h-4 text-blue-500" />
+                学习路线
+              </h4>
+              <div className="space-y-1.5">
+                {task.learningRoute.map((item, i) => {
+                  if (!item.trim()) return <div key={i} className="h-2" />;
+                  const isWeekHeading = /^(Week|Day|第)/.test(item.trim());
+                  const isSubItem = item.trim().startsWith('•') || item.trim().startsWith('-');
+                  return (
+                    <div key={i} className={cn(
+                      'text-sm leading-relaxed',
+                      isWeekHeading && 'font-bold text-gray-800 mt-2',
+                      isSubItem && 'text-gray-600 pl-4',
+                      !isWeekHeading && !isSubItem && 'text-gray-700'
+                    )}>
+                      {item}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {task.resources && task.resources.length > 0 && (
+            <div>
+              <h4 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <Star className="w-4 h-4 text-yellow-500" />
+                推荐资源
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {task.resources.map((r, i) => (
+                  r.url ? (
+                    <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all group">
+                      <div className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0" />
+                      <span className="text-sm text-gray-700 group-hover:text-blue-600 font-medium truncate">{r.name}</span>
+                    </a>
+                  ) : (
+                    <div key={i} className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-100">
+                      <div className="w-2 h-2 rounded-full bg-gray-300 flex-shrink-0" />
+                      <span className="text-sm text-gray-600">{r.name}</span>
+                    </div>
+                  )
+                ))}
+              </div>
+            </div>
+          )}
+
+          {task.quadrant && (
+            <div className="bg-gray-50 rounded-xl px-4 py-3">
+              <span className="text-xs text-gray-500">四象限：</span>
+              <span className={cn(
+                'text-sm font-medium ml-1',
+                task.quadrant === 'urgent-important' ? 'text-red-600'
+                  : task.quadrant === 'urgent-not-important' ? 'text-yellow-600'
+                  : task.quadrant === 'not-urgent-important' ? 'text-blue-600'
+                  : 'text-gray-600'
+              )}>
+                {task.quadrant === 'urgent-important' ? '重要紧急'
+                  : task.quadrant === 'urgent-not-important' ? '紧急不重要'
+                  : task.quadrant === 'not-urgent-important' ? '重要不紧急'
+                  : '不重要不紧急'}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ===================== Main Categories Component =====================
 
 export const Categories: React.FC = () => {
   const { todayCheckIns, tasks, streak, addCheckIn, initialize } = useCheckInStore();
+  const { plans, loadPlans } = usePlanStore();
   const [activeTab, setActiveTab] = useState('coding');
   const [activeSubTab, setActiveSubTab] = useState('coding-cs');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [detailTask, setDetailTask] = useState<Task | null>(null);
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [tomatoOpen, setTomatoOpen] = useState(false);
-  const [tomatoTask, setTomatoTask] = useState<{ id: string; categoryId: string; name: string } | null>(null);
   const [projectOpen, setProjectOpen] = useState(false);
+  const [planDetailTask, setPlanDetailTask] = useState<{ plan: UserPlan; task: UserPlanTask } | null>(null);
+  const [planDetailOpen, setPlanDetailOpen] = useState(false);
+  const [selectedPlanTask, setSelectedPlanTask] = useState<{ planId: number; categoryId: string; name: string } | null>(null);
 
   const today = new Date();
 
   useEffect(() => {
     initialize();
-  }, [initialize]);
+    loadPlans();
+  }, [initialize, loadPlans]);
 
   const checkedInTaskIds = useMemo(
     () => todayCheckIns.map(ci => ci.taskId),
     [todayCheckIns]
   );
 
+  const totalPlanTasks = useMemo(
+    () => plans.filter(p => p.isActive).flatMap(p => p.tasks).length,
+    [plans]
+  );
+
+  const completedPlanTasks = useMemo(
+    () => plans.filter(p => p.isActive)
+      .flatMap(p => p.tasks.map(t => ({ planId: p.id, task: t })))
+      .filter(({ planId, task }) => todayCheckIns.some(ci => ci.taskId === `plan-${planId}-${task.name}`))
+      .length,
+    [plans, todayCheckIns]
+  );
+
   const currentTask = useMemo(
-    () => DEFAULT_TASKS.find(t => t.id === activeSubTab && t.enabled) || null,
-    [activeSubTab]
+    () => tasks.find(t => t.id === activeSubTab && t.enabled) || null,
+    [activeSubTab, tasks]
+  );
+
+  const activePlansForTab = useMemo(
+    () => plans.filter(p => p.isActive && p.categoryId === activeTab),
+    [plans, activeTab]
   );
 
   const handleCheckIn = (task: Task) => {
     setSelectedTask(task);
+    setSelectedPlanTask(null);
+    setCheckInOpen(true);
+  };
+
+  const handlePlanCheckIn = (plan: UserPlan, task: UserPlanTask) => {
+    setSelectedPlanTask({ planId: plan.id!, categoryId: plan.categoryId, name: task.name });
+    setSelectedTask(null);
     setCheckInOpen(true);
   };
 
@@ -735,20 +717,16 @@ export const Categories: React.FC = () => {
     setDetailOpen(true);
   };
 
-  const handleTomato = (task: Task) => {
-    setTomatoTask({ id: task.id, categoryId: task.categoryId, name: task.name });
-    setTomatoOpen(true);
+  const handlePlanDetail = (plan: UserPlan, task: UserPlanTask) => {
+    setPlanDetailTask({ plan, task });
+    setPlanDetailOpen(true);
   };
 
   const confirmCheckIn = async (duration?: number, quantity?: number, note?: string, photo?: string) => {
     if (selectedTask) {
       await addCheckIn(selectedTask.id, selectedTask.categoryId, duration, quantity, note, photo);
-    }
-  };
-
-  const confirmTomatoCheckIn = async (duration: number) => {
-    if (tomatoTask) {
-      await addCheckIn(tomatoTask.id, tomatoTask.categoryId as any, duration);
+    } else if (selectedPlanTask) {
+      await addCheckIn(`plan-${selectedPlanTask.planId}-${selectedPlanTask.name}`, selectedPlanTask.categoryId as any, duration, quantity, note, photo);
     }
   };
 
@@ -803,15 +781,15 @@ export const Categories: React.FC = () => {
               <Star className="w-5 h-5 text-yellow-500" />
               <span className="font-medium text-gray-800">{'今日进度'}</span>
             </div>
-            <span className="font-bold text-gray-800">{checkedInTaskIds.length}/{tasks.filter(t => t.enabled).length} {'项'}</span>
+            <span className="font-bold text-gray-800">{completedPlanTasks}/{totalPlanTasks} {'项'}</span>
           </div>
           <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
             <div className="h-full rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 transition-all duration-700"
-              style={{ width: `${tasks.filter(t => t.enabled).length > 0 ? (checkedInTaskIds.length / tasks.filter(t => t.enabled).length) * 100 : 0}%` }} />
+              style={{ width: `${totalPlanTasks > 0 ? (completedPlanTasks / totalPlanTasks) * 100 : 0}%` }} />
           </div>
           <div className="flex justify-between mt-2 text-sm text-gray-500">
-            <span>{'已完成'} {Math.round(tasks.filter(t => t.enabled).length > 0 ? (checkedInTaskIds.length / tasks.filter(t => t.enabled).length) * 100 : 0)}%</span>
-            <span>{tasks.filter(t => t.enabled).length > 0 && checkedInTaskIds.length >= tasks.filter(t => t.enabled).length ? '🎉 全部完成！' : '加油！'}</span>
+            <span>{'已完成'} {Math.round(totalPlanTasks > 0 ? (completedPlanTasks / totalPlanTasks) * 100 : 0)}%</span>
+            <span>{totalPlanTasks > 0 && completedPlanTasks >= totalPlanTasks ? '🎉 全部完成！' : '加油！'}</span>
           </div>
         </div>
 
@@ -834,9 +812,9 @@ export const Categories: React.FC = () => {
             })}
           </div>
 
-          {/* Task Card */}
+          {/* Built-in Task Card */}
           {currentTask && (
-            <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+            <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100 mb-4">
               <div className="flex items-center gap-3 mb-4">
                 {currentTask.icon && iconMap[currentTask.icon] && (() => {
                   const SubIcon = iconMap[currentTask.icon]!;
@@ -865,10 +843,6 @@ export const Categories: React.FC = () => {
                 </button>
                 {activeTab === 'coding' && (
                   <>
-                    <button onClick={() => handleTomato(currentTask)}
-                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border border-orange-200 text-orange-500 hover:bg-orange-50 transition-colors">
-                      🍅
-                    </button>
                     {SUB_MODULE_PROJECT_MAP[activeSubTab]?.length > 0 && (
                       <button onClick={() => setProjectOpen(true)}
                         className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border border-purple-200 text-purple-600 hover:bg-purple-50 transition-colors">
@@ -880,22 +854,86 @@ export const Categories: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Plan Tasks Inline */}
+          {activePlansForTab.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-gray-500 flex items-center gap-2 px-1">
+                <BookOpen className="w-4 h-4" />
+                来自我的计划
+              </h4>
+              {activePlansForTab.map(plan => {
+                const style = CATEGORY_STYLES[plan.categoryId] || CATEGORY_STYLES.coding;
+                return (
+                  <div key={plan.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className={cn('px-5 py-3 flex items-center gap-2', style.bgLight)}>
+                      <BookOpen className={cn('w-4 h-4', style.text)} />
+                      <span className={cn('font-semibold text-sm', style.text)}>{plan.title}</span>
+                      <span className="ml-auto text-xs text-gray-400">{plan.tasks.length} 个任务</span>
+                    </div>
+                    <div className="p-4 space-y-2">
+                      {plan.tasks.map(task => {
+                        const taskCheckInId = `plan-${plan.id}-${task.name}`;
+                        const isCheckedIn = checkedInTaskIds.includes(taskCheckInId);
+                        return (
+                          <div key={task.id}
+                            className="flex items-center justify-between bg-amber-50 rounded-xl px-4 py-3 border border-amber-200">
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                              <span className={cn(
+                                'w-2 h-2 rounded-full flex-shrink-0',
+                                isCheckedIn ? 'bg-green-500' : 'bg-amber-400'
+                              )} />
+                              <span className={cn(
+                                'text-sm font-medium truncate',
+                                isCheckedIn ? 'text-gray-400 line-through' : 'text-gray-800'
+                              )}>
+                                {task.name}
+                              </span>
+                              {task.quadrant && (
+                                <span className="text-xs text-gray-400 hidden sm:inline">
+                                  · {task.quadrant === 'urgent-important' ? '重要紧急'
+                                    : task.quadrant === 'urgent-not-important' ? '紧急不重要'
+                                    : task.quadrant === 'not-urgent-important' ? '重要不紧急'
+                                    : '不重要不紧急'}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                              {isCheckedIn ? (
+                                <span className="flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-600 rounded-lg text-xs font-medium">
+                                  <Check className="w-3 h-3" /> 已打卡
+                                </span>
+                              ) : (
+                                <button onClick={() => handlePlanCheckIn(plan, task)}
+                                  className="px-3 py-1 rounded-lg text-xs font-medium text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 transition-opacity">
+                                  打卡
+                                </button>
+                              )}
+                              <button onClick={() => handlePlanDetail(plan, task)}
+                                className="px-3 py-1 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                                详情
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
       <TaskCheckInDialog open={checkInOpen} onClose={() => setCheckInOpen(false)}
-        task={selectedTask} onConfirm={confirmCheckIn} />
+        task={selectedTask} planTaskName={selectedPlanTask?.name} onConfirm={confirmCheckIn} />
 
       <TaskDetailDialog open={detailOpen} onClose={() => setDetailOpen(false)}
         task={detailTask} />
 
-      {tomatoOpen && tomatoTask && (
-        <TomatoTimer
-          taskName={tomatoTask.name}
-          onCheckIn={confirmTomatoCheckIn}
-          onClose={() => setTomatoOpen(false)}
-        />
-      )}
+      <PlanTaskDetailDialog open={planDetailOpen} onClose={() => setPlanDetailOpen(false)}
+        plan={planDetailTask?.plan || null} task={planDetailTask?.task || null} />
 
       {activeTab === 'coding' && (
         <ProjectPopup

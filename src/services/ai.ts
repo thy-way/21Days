@@ -1,13 +1,16 @@
 // ============================================================
 // MiniMax AI Plan Generation Service
 // ============================================================
-// ★★★ 在下面第12行填写你的 MiniMax API Key ★★★
+// ★★★ API Key 配置在项目根目录 .env 文件中 ★★★
+// 创建 .env 文件并写入: VITE_MINIMAX_API_KEY=你的key
 // ============================================================
 
 import { AITemplate, CategoryId, UserPlanTask } from '@/types';
 
-// >>> 把 YOUR_MINIMAX_API_KEY_HERE 替换为你的 key <<<
-const MINIMAX_API_KEY = 'sk-cp-wwq7bF1PzEpZkWDX6euEIsL55ic2K9qP7O2Qahwi0_-NbuQRZRYlI9O1q2eGGGLt-_zL-GwH6ui0SZ5L_F2hl5FuKi0xbdDMxqzwvfMJZ2FYxrq3S3aJ2aA';
+// >>> 在项目根目录 .env 文件中配置你的 key <<<
+// VITE_MINIMAX_API_KEY=你的key
+// 从 .env 读取 MiniMax API Key（.env 文件已在 .gitignore 中，不会被提交）
+const MINIMAX_API_KEY = import.meta.env.VITE_MINIMAX_API_KEY as string;
 
 // MiniMax API 地址（通过 Vite proxy 避免 CORS）
 // 开发时: /api/minimax → Vite proxy → https://api.minimax.io
@@ -95,8 +98,8 @@ export async function generatePlanFromAI(
   categoryId: CategoryId,
 ): Promise<{ title: string; tasks: UserPlanTask[] }> {
   const key = (MINIMAX_API_KEY as string);
-  if (!key || key === '' || key.startsWith('YOUR_')) {
-    throw new Error('请先在 src/services/ai.ts 第10行配置有效的 MiniMax API Key');
+  if (!key || key === '' || key === 'undefined') {
+    throw new Error('请先在项目根目录创建 .env 文件，添加 VITE_MINIMAX_API_KEY=你的key');
   }
 
   const prompt = buildPrompt(categoryId, template.questions, answers);

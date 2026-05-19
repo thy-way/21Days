@@ -3,49 +3,13 @@ import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import {
   Code, Globe, GraduationCap, Dumbbell, Briefcase,
-  BookOpen, BookMarked, Headphones, Mic, CheckCircle, CheckSquare,
-  Award, ShoppingCart, Server, BarChart3, FileText, MessageCircle,
-  Coffee, Terminal, FileCode, Layout, Binary, Heart, Activity,
-  Camera, Sparkles, Video, Rocket, Users, Search, Package,
-  Clock, Flame, Check, X, Star, Target, Zap, Box, Pen,
-  Monitor,
+  BookOpen, Clock, Flame, Check, X, Star, Target, Zap,
+  ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { useCheckInStore, usePlanStore } from '@/store';
-import { Task, UserPlanTask, UserPlan } from '@/types';
+import { UserPlanTask, UserPlan, CategoryId } from '@/types';
 import { cn } from '@/utils';
-import { getCategoryStyles, CATEGORY_STYLES } from '@/utils/categoryStyles';
-
-const ENCOURAGING_MESSAGES = [
-  '今天的努力是明天的基石 💪',
-  '坚持就是胜利！加油！',
-  '你已经很棒了，继续前进！',
-  '每一步都是进步 🌟',
-  '自律即自由',
-  '今天的付出，明天的收获',
-  '不忘初心，砥砺前行',
-  '做个不将就的人',
-  'Don\'t stop when you\'re tired, stop when you\'re done',
-  'Better late than never',
-  '相信过程，相信时间',
-  '为未来的自己奋斗',
-  '每一个不曾起舞的日子，都是对生命的辜负',
-  'Stay hungry, stay foolish',
-  '行动是克服恐惧的唯一方法',
-  '你今天的努力，是未来选择的底气',
-  '卓越不是一次行为，而是一种习惯',
-  '不积跬步，无以至千里',
-  '前行路上，有风有雨是常态',
-  '既然选择了远方，便只顾风雨兼程',
-];
-
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Dumbbell, Heart, Activity, Sparkles, Camera,
-  Coffee, Package, Terminal, FileCode, Layout, Binary, BookMarked,
-  ShoppingCart, Server, BarChart3, FileText, MessageCircle,
-  Headphones, Mic, BookOpen, Pen: Pen, CheckCircle, Award,
-  CheckSquare, Briefcase, Video, Rocket, Users,
-  GraduationCap, Search, Globe, Code, Box, Monitor,
-};
+import { CATEGORY_STYLES } from '@/utils/categoryStyles';
 
 const CATEGORY_TABS = [
   { id: 'coding', label: '编程学习', icon: Code },
@@ -55,209 +19,27 @@ const CATEGORY_TABS = [
   { id: 'side', label: '副业', icon: Briefcase },
 ];
 
-const MODULE_TABS: Record<string, { id: string; label: string }[]> = {
-  coding: [
-    { id: 'coding-cs', label: '计算机基础' },
-    { id: 'coding-algorithm', label: '数据结构算法' },
-    { id: 'coding-frontend', label: 'TS全栈' },
-    { id: 'coding-python', label: 'Python全栈' },
-    { id: 'coding-java', label: 'Java全栈' },
-    { id: 'coding-go', label: 'Go全栈' },
-  ],
-  english: [
-    { id: 'english-listening-learn', label: '听力' },
-    { id: 'english-speaking-learn', label: '口语' },
-    { id: 'english-reading-learn', label: '阅读' },
-    { id: 'english-writing-learn', label: '写作' },
-    { id: 'english-vocabulary', label: '词汇' },
-  ],
-  exam: [
-    { id: 'exam-pmp', label: 'PMP' },
-    { id: 'exam-csip', label: 'CSIP' },
-    { id: 'exam-ielts-learn', label: 'IELTS' },
-  ],
-  fitness: [
-    { id: 'fitness-training', label: '训练' },
-    { id: 'fitness-photo', label: '记录' },
-  ],
-  side: [
-    { id: 'side-action', label: '行动' },
-    { id: 'side-learning', label: '学习' },
-  ],
-};
-
-const SUB_MODULE_PROJECT_MAP: Record<string, string[]> = {
-  'coding-frontend': ['coding-project-blog', 'coding-project-ai'],
-  'coding-python': ['coding-project-python'],
-  'coding-java': ['coding-project-java'],
-  'coding-go': ['coding-project-go'],
-};
-
-// ===================== TaskDetailDialog =====================
-
-interface TaskDetailDialogProps {
-  open: boolean;
-  onClose: () => void;
-  task: Task | null;
-}
-
-const TaskDetailDialog: React.FC<TaskDetailDialogProps> = ({ open, onClose, task }) => {
-  if (!open || !task) return null;
-
-  const IconComp = iconMap[task.icon];
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white z-10 p-6 pb-4 border-b border-gray-100">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              {IconComp && (
-                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <IconComp className="w-6 h-6 text-blue-600" />
-                </div>
-              )}
-              <div>
-                <h3 className="text-xl font-bold text-gray-900">{task.name}</h3>
-                {task.description && (
-                  <p className="text-sm text-gray-500 mt-0.5">{task.description}</p>
-                )}
-              </div>
-            </div>
-            <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        <div className="p-6 space-y-6">
-          {task.learningRoute && task.learningRoute.length > 0 && (
-            <div>
-              <h4 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <Target className="w-4 h-4 text-blue-500" />
-                学习路线
-              </h4>
-              <div className="space-y-1.5">
-                {task.learningRoute.map((item, i) => {
-                  if (!item.trim()) return <div key={i} className="h-2" />;
-                  const isWeekHeading = /^(Week|Day|第)/.test(item.trim());
-                  const cleaned = item.replace(/^(Week|Day|第)\s*\d+(?:[-–—]\d+)?\s*[：:\-–—]?\s*/, '').trim();
-                  const isHeading = isWeekHeading || /^(周一|周二|周三|周四|周五|周六|周日|📋|📦|🛒|🔒|🎯|🤖|💾|⚡|🎨|⚙️|🚀|📊|🎛️|☑️|📝|📈|🎯|☁️)/.test(cleaned);
-                  const isSubItem = cleaned.startsWith('•') || cleaned.startsWith('-');
-                  return (
-                    <div key={i} className={cn(
-                      'text-sm leading-relaxed',
-                      isHeading && 'font-bold text-gray-800 mt-2',
-                      isSubItem && 'text-gray-600 pl-4',
-                      !isHeading && !isSubItem && 'text-gray-700'
-                    )}>
-                      {cleaned}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {task.resources && task.resources.length > 0 && (
-            <div>
-              <h4 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <Star className="w-4 h-4 text-yellow-500" />
-                推荐资源
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {task.resources.map((r, i) => (
-                  r.url ? (
-                    <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all group">
-                      <div className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0" />
-                      <span className="text-sm text-gray-700 group-hover:text-blue-600 font-medium truncate">{r.name}</span>
-                    </a>
-                  ) : (
-                    <div key={i} className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-100">
-                      <div className="w-2 h-2 rounded-full bg-gray-300 flex-shrink-0" />
-                      <span className="text-sm text-gray-600">{r.name}</span>
-                    </div>
-                  )
-                ))}
-              </div>
-            </div>
-          )}
-
-          {task.projects && task.projects.length > 0 && (
-            <div>
-              <h4 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-                <Rocket className="w-4 h-4 text-purple-500" />
-                实战项目
-              </h4>
-              <div className="space-y-4">
-                {task.projects.map((proj, pi) => (
-                  <div key={pi} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                    <h5 className="font-semibold text-gray-800 mb-2">{proj.name}</h5>
-                    <div className="space-y-1">
-                      {proj.learningRoute.map((item, ri) => {
-                        if (!item.trim()) return <div key={ri} className="h-1" />;
-                        return (
-                          <div key={ri} className={cn(
-                            'text-xs leading-relaxed',
-                            item.trim().startsWith('\u2022') || item.trim().startsWith('-') ? 'text-gray-500 pl-3' : 'text-gray-700 font-medium'
-                          )}>
-                            {item}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {proj.resources && proj.resources.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {proj.resources.map((r, ri) => r.url ? (
-                          <a key={ri} href={r.url} target="_blank" rel="noopener noreferrer"
-                            className="text-xs text-blue-600 hover:underline">{r.name}</a>
-                        ) : null)}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // ===================== TaskCheckInDialog =====================
 
 interface TaskCheckInDialogProps {
   open: boolean;
   onClose: () => void;
-  task: Task | null;
   planTaskName?: string;
   onConfirm: (duration?: number, quantity?: number, note?: string, photo?: string) => void;
 }
 
 const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
-  open, onClose, task, planTaskName, onConfirm,
+  open, onClose, planTaskName, onConfirm,
 }) => {
-  const [duration, setDuration] = useState(task?.defaultDuration || 30);
+  const [duration, setDuration] = useState(30);
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState('');
   const [photo, setPhoto] = useState('');
   const [showPhotoInput, setShowPhotoInput] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [mode, setMode] = useState<'duration' | 'quantity'>(
-    task?.unit === '分钟' ? 'duration' : 'quantity'
-  );
+  const [mode, setMode] = useState<'duration' | 'quantity'>('duration');
 
-  useEffect(() => {
-    if (task) {
-      setMode(task.unit === '分钟' ? 'duration' : 'quantity');
-      setDuration(task.defaultDuration || 30);
-    }
-  }, [task]);
-
-  if (!open || (!task && !planTaskName)) return null;
+  if (!open || !planTaskName) return null;
 
   const handleConfirm = () => {
     if (mode === 'duration') {
@@ -287,20 +69,20 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-sm overflow-hidden">
         {showSuccess ? (
           <div className="p-8 flex flex-col items-center justify-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <Check className="w-10 h-10 text-green-500" />
             </div>
             <p className="text-lg font-bold text-green-600 mb-2">记录已保存！</p>
-            <p className="text-gray-500 text-sm">{ENCOURAGING_MESSAGES[Math.floor(Math.random() * ENCOURAGING_MESSAGES.length)]}</p>
+            <p className="text-gray-500 text-sm">继续加油！</p>
           </div>
         ) : (
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">{planTaskName || task?.name}</h3>
-              <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+              <h3 className="text-xl font-bold text-gray-900">{planTaskName}</h3>
+              <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -329,7 +111,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
               </div>
             ) : (
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">数量（{task?.unit || '次'}）</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">数量（次）</label>
                 <div className="flex items-center justify-center space-x-4">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="w-12 h-12 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-2xl font-bold">-</button>
@@ -343,13 +125,13 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">备注（可选）</label>
               <input type="text" placeholder="添加备注..." value={note} onChange={(e) => setNote(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-orange-500" />
             </div>
 
             <div className="mb-4">
               <button type="button" onClick={() => setShowPhotoInput(!showPhotoInput)}
                 className="flex items-center text-sm text-gray-500 hover:text-gray-700">
-                <span className="mr-2">{'📷'}</span>
+                <span className="mr-2">📷</span>
                 {photo ? '更换照片' : '添加照片（可选）'}
               </button>
               {showPhotoInput && (
@@ -363,8 +145,8 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors">
-                      <span className="text-3xl mb-2">{'📷'}</span>
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors">
+                      <span className="text-3xl mb-2">📷</span>
                       <span className="text-sm text-gray-500">点击上传照片</span>
                       <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
                     </label>
@@ -379,161 +161,6 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
             </button>
           </div>
         )}
-      </div>
-    </div>
-  );
-};
-
-// ===================== ProjectPopup =====================
-
-interface ProjectPopupProps {
-  open: boolean;
-  onClose: () => void;
-  subModuleId: string;
-  checkedInTaskIds: string[];
-  onCheckIn: (task: Task) => void;
-}
-
-const ProjectPopup: React.FC<ProjectPopupProps> = ({ open, onClose, subModuleId, checkedInTaskIds, onCheckIn }) => {
-  const { tasks } = useCheckInStore();
-  if (!open) return null;
-
-  const projectTaskIds = SUB_MODULE_PROJECT_MAP[subModuleId] || [];
-  const projectTasks = tasks.filter(t => projectTaskIds.includes(t.id));
-
-  if (projectTasks.length === 0) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-8 text-center">
-          <p className="text-gray-400 text-lg mb-4">该模块暂无实战项目</p>
-          <button onClick={onClose}
-            className="px-6 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200 transition-colors">
-            关闭
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <Rocket className="w-5 h-5 text-purple-500" />
-            实战项目
-          </h3>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-6">
-          {projectTasks.map(task => {
-            const TaskIcon = iconMap[task.icon] || null;
-            const isCheckedIn = checkedInTaskIds.includes(task.id);
-
-            return (
-              <div key={task.id} className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
-                <div className="p-5">
-                  <div className="flex items-center gap-3 mb-4">
-                    {TaskIcon && (
-                      <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
-                        <TaskIcon className="w-5 h-5 text-orange-500" />
-                      </div>
-                    )}
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{task.name}</h4>
-                      {task.description && (
-                        <p className="text-xs text-gray-500">{task.description}</p>
-                      )}
-                    </div>
-                    <div className="ml-auto">
-                      {isCheckedIn ? (
-                        <span className="px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-600 flex items-center gap-1">
-                          <Check className="w-3 h-3" /> {'已打卡'}
-                        </span>
-                      ) : (
-                        <button onClick={() => onCheckIn(task)}
-                          className="px-4 py-1.5 rounded-lg text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 transition-colors">
-                          {'✅ 打卡'}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Tech Stack */}
-                  {task.resources && task.resources.length > 0 && (
-                    <div className="mb-4">
-                      <h5 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-1.5">⚙️ 技术栈</h5>
-                      <div className="flex flex-wrap gap-1.5">
-                        {task.resources.map((r, i) => {
-                          const tech = r.name.replace(/ (文档|教程|官方文档|部署|示例|实战|指南|API).*$/, '');
-                          return (
-                            <span key={i} className="px-2.5 py-1 bg-gray-100 rounded-lg text-xs text-gray-600 font-medium">
-                              {tech || r.name}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {task.learningRoute && task.learningRoute.length > 0 && (
-                    <div className="mb-4">
-                      <h5 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-1.5">
-                        <Target className="w-3.5 h-3.5 text-blue-500" />
-                        学习路线
-                      </h5>
-                      <div className="space-y-1">
-                        {task.learningRoute.map((item, i) => {
-                          if (!item.trim()) return <div key={i} className="h-1" />;
-                          const isWeekHeading = /^(Week|Day|第)/.test(item.trim());
-                          const cleaned = item.replace(/^(Week|Day|第)\s*\d+(?:[-–—]\d+)?\s*[：:\-–—]?\s*/, '').trim();
-                          const isHeading = isWeekHeading || /^(周一|周二|周三|周四|周五|周六|周日|📋|📦|🛒|🔒|🎯|🤖|💾|⚡|🎨|⚙️|🚀|📊|🎛️|☑️)/.test(cleaned);
-                          const isSubItem = cleaned.startsWith('•') || cleaned.startsWith('-');
-                          return (
-                            <div key={i} className={cn(
-                              'text-xs leading-relaxed',
-                              isHeading && 'font-bold text-gray-800 mt-1.5',
-                              isSubItem && 'text-gray-500 pl-3',
-                              !isHeading && !isSubItem && 'text-gray-600'
-                            )}>
-                              {cleaned}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {task.resources && task.resources.length > 0 && (
-                    <div>
-                      <h5 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-1.5">
-                        <Star className="w-3.5 h-3.5 text-yellow-500" />
-                        推荐资源
-                      </h5>
-                      <div className="flex flex-wrap gap-2">
-                        {task.resources.map((r, i) => r.url ? (
-                          <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
-                            className="text-xs text-blue-600 hover:underline bg-blue-50 px-2.5 py-1 rounded-lg">
-                            {r.name}
-                          </a>
-                        ) : (
-                          <span key={i} className="text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-lg">
-                            {r.name}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
     </div>
   );
@@ -556,7 +183,7 @@ const PlanTaskDetailDialog: React.FC<PlanTaskDetailDialogProps> = ({ open, onClo
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
+      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto">
         <div className="sticky top-0 bg-white z-10 p-6 pb-4 border-b border-gray-100">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -611,9 +238,9 @@ const PlanTaskDetailDialog: React.FC<PlanTaskDetailDialogProps> = ({ open, onClo
                 {task.resources.map((r, i) => (
                   r.url ? (
                     <a key={i} href={r.url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all group">
-                      <div className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0" />
-                      <span className="text-sm text-gray-700 group-hover:text-blue-600 font-medium truncate">{r.name}</span>
+                      className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-orange-200 hover:bg-orange-50 transition-all group">
+                      <div className="w-2 h-2 rounded-full bg-orange-400 flex-shrink-0" />
+                      <span className="text-sm text-gray-700 group-hover:text-orange-600 font-medium truncate">{r.name}</span>
                     </a>
                   ) : (
                     <div key={i} className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-100">
@@ -652,25 +279,29 @@ const PlanTaskDetailDialog: React.FC<PlanTaskDetailDialogProps> = ({ open, onClo
 // ===================== Main Categories Component =====================
 
 export const Categories: React.FC = () => {
-  const { todayCheckIns, tasks, streak, addCheckIn, initialize } = useCheckInStore();
+  const { todayCheckIns, streak, addCheckIn } = useCheckInStore();
   const { plans, loadPlans } = usePlanStore();
-  const [activeTab, setActiveTab] = useState('coding');
-  const [activeSubTab, setActiveSubTab] = useState('coding-cs');
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [detailTask, setDetailTask] = useState<Task | null>(null);
+  const [activeTab, setActiveTab] = useState<CategoryId>('coding');
   const [checkInOpen, setCheckInOpen] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [projectOpen, setProjectOpen] = useState(false);
-  const [planDetailTask, setPlanDetailTask] = useState<{ plan: UserPlan; task: UserPlanTask } | null>(null);
   const [planDetailOpen, setPlanDetailOpen] = useState(false);
+  const [planDetailTask, setPlanDetailTask] = useState<{ plan: UserPlan; task: UserPlanTask } | null>(null);
   const [selectedPlanTask, setSelectedPlanTask] = useState<{ planId: number; categoryId: string; name: string } | null>(null);
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+
+  const toggleTaskExpand = (taskId: string) => {
+    setExpandedTasks(prev => {
+      const next = new Set(prev);
+      if (next.has(taskId)) next.delete(taskId);
+      else next.add(taskId);
+      return next;
+    });
+  };
 
   const today = new Date();
 
   useEffect(() => {
-    initialize();
     loadPlans();
-  }, [initialize, loadPlans]);
+  }, [loadPlans]);
 
   const checkedInTaskIds = useMemo(
     () => todayCheckIns.map(ci => ci.taskId),
@@ -690,31 +321,14 @@ export const Categories: React.FC = () => {
     [plans, todayCheckIns]
   );
 
-  const currentTask = useMemo(
-    () => tasks.find(t => t.id === activeSubTab && t.enabled) || null,
-    [activeSubTab, tasks]
-  );
-
   const activePlansForTab = useMemo(
     () => plans.filter(p => p.isActive && p.categoryId === activeTab),
     [plans, activeTab]
   );
 
-  const handleCheckIn = (task: Task) => {
-    setSelectedTask(task);
-    setSelectedPlanTask(null);
-    setCheckInOpen(true);
-  };
-
   const handlePlanCheckIn = (plan: UserPlan, task: UserPlanTask) => {
     setSelectedPlanTask({ planId: plan.id!, categoryId: plan.categoryId, name: task.name });
-    setSelectedTask(null);
     setCheckInOpen(true);
-  };
-
-  const handleDetail = (task: Task) => {
-    setDetailTask(task);
-    setDetailOpen(true);
   };
 
   const handlePlanDetail = (plan: UserPlan, task: UserPlanTask) => {
@@ -723,15 +337,13 @@ export const Categories: React.FC = () => {
   };
 
   const confirmCheckIn = async (duration?: number, quantity?: number, note?: string, photo?: string) => {
-    if (selectedTask) {
-      await addCheckIn(selectedTask.id, selectedTask.categoryId, duration, quantity, note, photo);
-    } else if (selectedPlanTask) {
+    if (selectedPlanTask) {
       await addCheckIn(`plan-${selectedPlanTask.planId}-${selectedPlanTask.name}`, selectedPlanTask.categoryId as any, duration, quantity, note, photo);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6">
@@ -739,11 +351,11 @@ export const Categories: React.FC = () => {
             <div className="p-2.5 bg-orange-500 rounded-xl">
               <Zap className="w-6 h-6 text-white" />
             </div>
-            21Days<span className="text-sm text-gray-400 font-normal ml-1">{'全部任务'}</span>
+            21Days<span className="text-sm text-gray-400 font-normal ml-1">全部任务</span>
             <div className="flex items-center gap-1.5 text-base ml-auto text-orange-500">
               <Flame className="w-5 h-5" />
               <span className="font-bold">{streak}</span>
-              <span className="text-gray-400 font-normal">{'天'}</span>
+              <span className="text-gray-400 font-normal">天</span>
             </div>
           </h1>
           <p className="text-gray-500 mt-1 flex items-center gap-1.5">
@@ -752,21 +364,21 @@ export const Categories: React.FC = () => {
           </p>
         </div>
 
-        {/* Module Tab Bar */}
+        {/* Category Tab Bar */}
         <div className="mb-6">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {CATEGORY_TABS.map(tab => {
               const TabIcon = tab.icon;
               const isActive = activeTab === tab.id;
               return (
-                <button key={tab.id} onClick={() => { setActiveTab(tab.id); setActiveSubTab(MODULE_TABS[tab.id]?.[0]?.id || ''); }}
+                <button key={tab.id} onClick={() => setActiveTab(tab.id as CategoryId)}
                   className={cn(
                     'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all',
                     isActive
                       ? 'bg-white shadow-md text-gray-900 border border-gray-200'
                       : 'text-gray-500 hover:text-gray-700 hover:bg-white/70 border border-transparent'
                   )}>
-                  <TabIcon className={cn('w-4 h-4', isActive && getCategoryStyles(tab.id as any).text)} />
+                  <TabIcon className={cn('w-4 h-4', isActive && CATEGORY_STYLES[tab.id as CategoryId]?.text)} />
                   {tab.label}
                 </button>
               );
@@ -778,107 +390,48 @@ export const Categories: React.FC = () => {
         <div className="bg-white rounded-xl shadow-card p-5 mb-6 border border-gray-100">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-yellow-500" />
-              <span className="font-medium text-gray-800">{'今日进度'}</span>
+              <Star className="w-5 h-5 text-orange-400" />
+              <span className="font-medium text-gray-800">今日进度</span>
             </div>
-            <span className="font-bold text-gray-800">{completedPlanTasks}/{totalPlanTasks} {'项'}</span>
+            <span className="font-bold text-gray-800">{completedPlanTasks}/{totalPlanTasks} 项</span>
           </div>
           <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
             <div className="h-full rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 transition-all duration-700"
               style={{ width: `${totalPlanTasks > 0 ? (completedPlanTasks / totalPlanTasks) * 100 : 0}%` }} />
           </div>
           <div className="flex justify-between mt-2 text-sm text-gray-500">
-            <span>{'已完成'} {Math.round(totalPlanTasks > 0 ? (completedPlanTasks / totalPlanTasks) * 100 : 0)}%</span>
+            <span>已完成 {Math.round(totalPlanTasks > 0 ? (completedPlanTasks / totalPlanTasks) * 100 : 0)}%</span>
             <span>{totalPlanTasks > 0 && completedPlanTasks >= totalPlanTasks ? '🎉 全部完成！' : '加油！'}</span>
           </div>
         </div>
 
-        {/* Sub-module Tabs */}
-        <div className="mb-6">
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide mb-6">
-            {(MODULE_TABS[activeTab] || []).map(tab => {
-              const isActive = activeSubTab === tab.id;
+        {/* Plan Tasks for selected category */}
+        {activePlansForTab.length > 0 ? (
+          <div className="space-y-4">
+            {activePlansForTab.map(plan => {
+              const style = CATEGORY_STYLES[plan.categoryId] || CATEGORY_STYLES.coding;
               return (
-                <button key={tab.id} onClick={() => setActiveSubTab(tab.id)}
-                  className={cn(
-                    'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all',
-                    isActive
-                      ? 'bg-white shadow-md text-gray-900 border border-gray-200'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-white/70 border border-transparent'
-                  )}>
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
+                <div key={plan.id} className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
+                  {/* Plan Header */}
+                  <div className={cn('px-5 py-3 flex items-center gap-2', style.bgLight)}>
+                    <BookOpen className={cn('w-4 h-4', style.text)} />
+                    <span className={cn('font-semibold text-sm', style.text)}>{plan.title}</span>
+                    <span className="ml-auto text-xs text-gray-400">{plan.tasks.length} 个任务</span>
+                  </div>
 
-          {/* Built-in Task Card */}
-          {currentTask && (
-            <div className="bg-white rounded-xl shadow-card p-5 border border-gray-100 mb-4">
-              <div className="flex items-center gap-3 mb-4">
-                {currentTask.icon && iconMap[currentTask.icon] && (() => {
-                  const SubIcon = iconMap[currentTask.icon]!;
-                  return (
-                    <div className="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
-                      <SubIcon className="w-5 h-5 text-orange-500" />
-                    </div>
-                  );
-                })()}
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">{currentTask.name}</h3>
-                  {currentTask.description && (
-                    <p className="text-sm text-gray-500">{currentTask.description}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-3 mt-4">
-                <button onClick={() => handleDetail(currentTask)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                  📖 详情
-                </button>
-                <button onClick={() => handleCheckIn(currentTask)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 transition-colors">
-                  ✅ 打卡
-                </button>
-                {activeTab === 'coding' && (
-                  <>
-                    {SUB_MODULE_PROJECT_MAP[activeSubTab]?.length > 0 && (
-                      <button onClick={() => setProjectOpen(true)}
-                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border border-purple-200 text-purple-600 hover:bg-purple-50 transition-colors">
-                        🛠 项目实战
-                      </button>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Plan Tasks Inline */}
-          {activePlansForTab.length > 0 && (
-            <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-gray-500 flex items-center gap-2 px-1">
-                <BookOpen className="w-4 h-4" />
-                来自我的计划
-              </h4>
-              {activePlansForTab.map(plan => {
-                const style = CATEGORY_STYLES[plan.categoryId] || CATEGORY_STYLES.coding;
-                return (
-                  <div key={plan.id} className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
-                    <div className={cn('px-5 py-3 flex items-center gap-2', style.bgLight)}>
-                      <BookOpen className={cn('w-4 h-4', style.text)} />
-                      <span className={cn('font-semibold text-sm', style.text)}>{plan.title}</span>
-                      <span className="ml-auto text-xs text-gray-400">{plan.tasks.length} 个任务</span>
-                    </div>
-                    <div className="p-4 space-y-2">
-                      {plan.tasks.map(task => {
-                        const taskCheckInId = `plan-${plan.id}-${task.name}`;
-                        const isCheckedIn = checkedInTaskIds.includes(taskCheckInId);
-                        return (
-                          <div key={task.id}
-                            className="flex items-center justify-between bg-amber-50 rounded-xl px-4 py-3 border border-amber-200">
-                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                  {/* Plan Tasks */}
+                  <div className="p-4 space-y-2">
+                    {plan.tasks.map(task => {
+                      const taskCheckInId = `plan-${plan.id}-${task.name}`;
+                      const isCheckedIn = checkedInTaskIds.includes(taskCheckInId);
+                      const isExpanded = expandedTasks.has(task.id);
+                      return (
+                        <div key={task.id}
+                          className="bg-amber-50 rounded-xl border border-amber-200 overflow-hidden">
+                          {/* Clickable Task Header */}
+                          <button onClick={() => toggleTaskExpand(task.id)}
+                            className="w-full flex items-center justify-between px-4 py-3 hover:bg-amber-100/50 transition-colors">
+                            <div className="flex items-center gap-2 min-w-0 flex-1 text-left">
                               <span className={cn(
                                 'w-2 h-2 rounded-full flex-shrink-0',
                                 isCheckedIn ? 'bg-green-500' : 'bg-amber-400'
@@ -904,46 +457,91 @@ export const Categories: React.FC = () => {
                                   <Check className="w-3 h-3" /> 已打卡
                                 </span>
                               ) : (
-                                <button onClick={() => handlePlanCheckIn(plan, task)}
+                                <button onClick={(e) => { e.stopPropagation(); handlePlanCheckIn(plan, task); }}
                                   className="px-3 py-1 rounded-lg text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 transition-colors">
                                   打卡
                                 </button>
                               )}
-                              <button onClick={() => handlePlanDetail(plan, task)}
+                              <button onClick={(e) => { e.stopPropagation(); handlePlanDetail(plan, task); }}
                                 className="px-3 py-1 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
                                 详情
                               </button>
+                              {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                          </button>
+
+                          {/* Collapsible Content */}
+                          {isExpanded && (
+                            <div className="border-t border-amber-200/50">
+                              {/* Learning Route Preview */}
+                              {task.learningRoute && task.learningRoute.length > 0 && (
+                                <div className="px-4 pt-2 pb-1">
+                                  {task.learningRoute.slice(0, 3).map((line, i) => (
+                                    <div key={i} className={cn(
+                                      'text-xs leading-relaxed',
+                                      line.startsWith('•') || line.startsWith('-') ? 'text-gray-500 pl-3' : 'text-gray-600 font-medium'
+                                    )}>
+                                      {line}
+                                    </div>
+                                  ))}
+                                  {task.learningRoute.length > 3 && (
+                                    <button onClick={(e) => { e.stopPropagation(); handlePlanDetail(plan, task); }}
+                                      className="text-xs text-orange-500 hover:text-orange-600 mt-1">
+                                      查看全部 {task.learningRoute.length} 项 →
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Resources */}
+                              {task.resources && task.resources.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 px-4 pt-1 pb-3">
+                                  {task.resources.map((r, ri) => (
+                                    r.url ? (
+                                      <a key={ri} href={r.url} target="_blank" rel="noopener noreferrer"
+                                        className="px-2 py-0.5 bg-white text-gray-500 rounded text-xs hover:text-orange-500 border border-gray-200">
+                                        {r.name}
+                                      </a>
+                                    ) : (
+                                      <span key={ri} className="px-2 py-0.5 bg-white text-gray-400 rounded text-xs border border-gray-200">
+                                        {r.name}
+                                      </span>
+                                    )
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <BookOpen className="w-8 h-8 text-gray-300" />
             </div>
-          )}
-        </div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              该分类下暂无计划任务
+            </h3>
+            <p className="text-gray-500 text-sm">
+              前往「计划」页面创建学习计划，任务将在这里展示
+            </p>
+          </div>
+        )}
       </div>
 
       <TaskCheckInDialog open={checkInOpen} onClose={() => setCheckInOpen(false)}
-        task={selectedTask} planTaskName={selectedPlanTask?.name} onConfirm={confirmCheckIn} />
-
-      <TaskDetailDialog open={detailOpen} onClose={() => setDetailOpen(false)}
-        task={detailTask} />
+        planTaskName={selectedPlanTask?.name} onConfirm={confirmCheckIn} />
 
       <PlanTaskDetailDialog open={planDetailOpen} onClose={() => setPlanDetailOpen(false)}
         plan={planDetailTask?.plan || null} task={planDetailTask?.task || null} />
-
-      {activeTab === 'coding' && (
-        <ProjectPopup
-          open={projectOpen}
-          onClose={() => setProjectOpen(false)}
-          subModuleId={activeSubTab}
-          checkedInTaskIds={checkedInTaskIds}
-          onCheckIn={handleCheckIn}
-        />
-      )}
     </div>
   );
 };
+
+export default Categories;

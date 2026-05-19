@@ -11,39 +11,29 @@ import {
   Clock,
 } from 'lucide-react';
 import { useCheckInStore, usePlanStore } from '@/store';
-import { Task, QuadrantType } from '@/types';
+import { QuadrantType } from '@/types';
 import { cn } from '@/utils';
 import { TomatoTimer } from '@/components/TomatoTimer';
 
 interface TaskCheckInDialogProps {
   open: boolean;
   onClose: () => void;
-  task: Task | null;
   planTaskName?: string;
   onConfirm: (duration?: number, quantity?: number, note?: string, photo?: string) => void;
 }
 
 const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
-  open, onClose, task, planTaskName, onConfirm,
+  open, onClose, planTaskName, onConfirm,
 }) => {
-  const [duration, setDuration] = useState(task?.defaultDuration || 30);
+  const [duration, setDuration] = useState(30);
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState('');
   const [photo, setPhoto] = useState('');
   const [showPhotoInput, setShowPhotoInput] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [mode, setMode] = useState<'duration' | 'quantity'>(
-    task?.unit === '分钟' ? 'duration' : 'quantity'
-  );
+  const [mode, setMode] = useState<'duration' | 'quantity'>('duration');
 
-  useEffect(() => {
-    if (task) {
-      setMode(task.unit === '分钟' ? 'duration' : 'quantity');
-      setDuration(task.defaultDuration || 30);
-    }
-  }, [task]);
-
-  if (!open || (!task && !planTaskName)) return null;
+  if (!open || !planTaskName) return null;
 
   const handleConfirm = () => {
     if (mode === 'duration') {
@@ -85,7 +75,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
         ) : (
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">{planTaskName || task?.name}</h3>
+              <h3 className="text-xl font-bold text-gray-900">{planTaskName}</h3>
               <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
                 <X className="w-5 h-5" />
               </button>
@@ -115,7 +105,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
               </div>
             ) : (
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">数量（{task?.unit || '次'}）</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">数量（次）</label>
                 <div className="flex items-center justify-center space-x-4">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="w-12 h-12 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-2xl font-bold">-</button>
@@ -178,25 +168,18 @@ interface QuadrantCellProps {
   title: string;
   desc: string;
   headerBg: string;
-  tasks: Task[];
-  plans: any[];
-  draggedTask: Task | null;
-  onDragOver: (e: React.DragEvent) => void;
-  onDrop: (id: QuadrantType) => void;
   renderTasks: (id: QuadrantType) => React.ReactNode;
 }
 
 const QuadrantCell: React.FC<QuadrantCellProps> = ({
-  quadrantId, icon, title, desc, headerBg, onDragOver, onDrop, renderTasks, draggedTask,
+  quadrantId, icon, title, desc, headerBg, renderTasks,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const taskContent = renderTasks(quadrantId);
   const taskCount = React.Children.count(taskContent);
 
   return (
-    <div onDragOver={onDragOver} onDrop={() => onDrop(quadrantId)}
-      className={cn('bg-white rounded-xl shadow-card border border-gray-100 flex flex-col min-h-0 transition-shadow',
-        draggedTask && 'ring-2 ring-orange-400')}>
+    <div className="bg-white rounded-xl shadow-card border border-gray-100 flex flex-col min-h-0">
       {/* 标题栏 */}
       <div className={cn('flex items-center gap-2 px-3 py-2 rounded-t-xl', headerBg)}>
         <span className="text-base">{icon}</span>
@@ -214,7 +197,7 @@ const QuadrantCell: React.FC<QuadrantCellProps> = ({
       {/* 任务列表 */}
       <div className={cn('px-3 py-2 space-y-1 overflow-y-auto transition-all', expanded ? 'max-h-[300px]' : 'max-h-[140px]')}>
         {taskCount > 0 ? taskContent : (
-          <div className="text-center text-gray-300 text-xs py-4">拖拽任务到此处</div>
+          <div className="text-center text-gray-300 text-xs py-4">暂无任务</div>
         )}
       </div>
 
@@ -230,86 +213,45 @@ const QuadrantCell: React.FC<QuadrantCellProps> = ({
 };
 
 export const Home: React.FC = () => {
-  const { todayCheckIns, tasks, streak, addCheckIn, updateTaskQuadrant } = useCheckInStore();
+  const { todayCheckIns, streak, addCheckIn } = useCheckInStore();
   const { plans, loadPlans } = usePlanStore();
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedPlanTask, setSelectedPlanTask] = useState<{ planId: number; categoryId: string; name: string } | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [draggedTask, setDraggedTask] = useState<Task | null>(null);
-  const [tomatoTask, setTomatoTask] = useState<{ name: string; taskId?: string; categoryId?: string; planId?: number; planCategoryId?: string } | null>(null);
+  const [tomatoTask, setTomatoTask] = useState<{ name: string; planId?: number; planCategoryId?: string } | null>(null);
 
   useEffect(() => { loadPlans(); }, [loadPlans]);
 
-  const handleCheckIn = (task: Task) => {
-    setSelectedTask(task);
-    setSelectedPlanTask(null);
-    setDialogOpen(true);
-  };
-
   const handlePlanTaskCheckIn = (planId: number, categoryId: string, name: string) => {
     setSelectedPlanTask({ planId, categoryId, name });
-    setSelectedTask(null);
     setDialogOpen(true);
   };
 
   const confirmCheckIn = async (duration?: number, quantity?: number, note?: string, photo?: string) => {
-    if (selectedTask) {
-      await addCheckIn(selectedTask.id, selectedTask.categoryId, duration, quantity, note, photo);
-    } else if (selectedPlanTask) {
+    if (selectedPlanTask) {
       await addCheckIn(`plan-${selectedPlanTask.planId}-${selectedPlanTask.name}`, selectedPlanTask.categoryId as any, duration, quantity, note, photo);
     }
   };
 
-  const handleDragStart = (task: Task) => setDraggedTask(task);
-  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
-  const handleDrop = async (quadrantId: QuadrantType) => {
-    if (draggedTask) {
-      await updateTaskQuadrant(draggedTask.id, quadrantId);
-      setDraggedTask(null);
-    }
-  };
-
   const renderQuadrantTasks = (quadrantId: QuadrantType) => {
-    const builtIn = tasks.filter(t => t.quadrant === quadrantId);
     const fromPlans = plans.filter(p => p.isActive).flatMap(p =>
       p.tasks.filter(t => t.quadrant === quadrantId).map(t => ({ ...t, planId: p.id!, planCategoryId: p.categoryId }))
     );
-    const all = [...builtIn, ...fromPlans];
-    if (all.length === 0) return null;
-    return all.map((item) => {
-      const isPlan = 'planId' in item;
-      if (isPlan) {
-        const pt = item as any;
-        return (
-          <div key={`plan-${pt.planId}-${pt.id}`}
-            className="flex items-center justify-between bg-amber-50 rounded-lg px-2.5 py-1.5 text-xs border border-amber-200 mb-1">
-            <span className="truncate text-gray-700 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
-              {pt.name}
-            </span>
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <button onClick={() => setTomatoTask({ name: pt.name, planId: pt.planId, planCategoryId: pt.planCategoryId })}
-                className="px-1 py-0.5 text-orange-500 hover:bg-orange-100 rounded text-xs">🍅</button>
-              <button onClick={() => handlePlanTaskCheckIn(pt.planId, pt.planCategoryId, pt.name)}
-                className="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-xs hover:bg-amber-200">打卡</button>
-            </div>
-          </div>
-        );
-      }
-      const task = item as Task;
-      return (
-        <div key={task.id} draggable onDragStart={() => handleDragStart(task)}
-          className="flex items-center justify-between bg-gray-50 rounded-lg px-2.5 py-1.5 text-xs cursor-move hover:bg-gray-100 mb-1">
-          <span className="truncate text-gray-700">{task.name}</span>
-          <div className="flex items-center gap-1 flex-shrink-0">
-            <button onClick={() => setTomatoTask({ name: task.name, taskId: task.id, categoryId: task.categoryId })}
-              className="px-1 py-0.5 text-orange-500 hover:bg-orange-100 rounded text-xs">🍅</button>
-            <button onClick={() => handleCheckIn(task)}
-              className="px-1.5 py-0.5 bg-gray-200 text-gray-700 rounded text-xs hover:bg-gray-300">打卡</button>
-          </div>
+    if (fromPlans.length === 0) return null;
+    return fromPlans.map((pt: any) => (
+      <div key={`plan-${pt.planId}-${pt.id}`}
+        className="flex items-center justify-between bg-amber-50 rounded-lg px-2.5 py-1.5 text-xs border border-amber-200 mb-1">
+        <span className="truncate text-gray-700 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+          {pt.name}
+        </span>
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button onClick={() => setTomatoTask({ name: pt.name, planId: pt.planId, planCategoryId: pt.planCategoryId })}
+            className="px-1 py-0.5 text-orange-500 hover:bg-orange-100 rounded text-xs">🍅</button>
+          <button onClick={() => handlePlanTaskCheckIn(pt.planId, pt.planCategoryId, pt.name)}
+            className="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-xs hover:bg-amber-200">打卡</button>
         </div>
-      );
-    });
+      </div>
+    ));
   };
 
   const totalTasks = plans.filter(p => p.isActive).flatMap(p => p.tasks).length;
@@ -370,35 +312,25 @@ export const Home: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <QuadrantCell quadrantId="urgent-important" icon="🔥" title="重要紧急" desc="立即处理" headerBg="bg-red-50"
-              tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
+              renderTasks={renderQuadrantTasks} />
             <QuadrantCell quadrantId="urgent-not-important" icon="⚡" title="紧急不重要" desc="尽快处理" headerBg="bg-amber-50"
-              tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
+              renderTasks={renderQuadrantTasks} />
             <QuadrantCell quadrantId="not-urgent-important" icon="🎯" title="重要不紧急" desc="规划安排" headerBg="bg-blue-50"
-              tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
+              renderTasks={renderQuadrantTasks} />
             <QuadrantCell quadrantId="not-urgent-not-important" icon="🗑️" title="不重要不紧急" desc="减少或删除" headerBg="bg-gray-50"
-              tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
+              renderTasks={renderQuadrantTasks} />
           </div>
         </div>
 
-        {/* 查看全部任务 */}
-        <div className="text-center">
-          <a href="/categories"
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white rounded-xl shadow-card text-sm font-medium text-gray-500 hover:text-gray-700 hover:shadow-card-hover transition-shadow">
-            <Target className="w-4 h-4" />
-            查看全部任务
-          </a>
-        </div>
       </div>
 
       <TaskCheckInDialog open={dialogOpen} onClose={() => setDialogOpen(false)}
-        task={selectedTask} planTaskName={selectedPlanTask?.name} onConfirm={confirmCheckIn} />
+        planTaskName={selectedPlanTask?.name} onConfirm={confirmCheckIn} />
 
       {tomatoTask && (
         <TomatoTimer taskName={tomatoTask.name}
           onCheckIn={(duration) => {
-            if (tomatoTask.taskId && tomatoTask.categoryId) {
-              addCheckIn(tomatoTask.taskId, tomatoTask.categoryId as any, duration);
-            } else if (tomatoTask.planId && tomatoTask.planCategoryId) {
+            if (tomatoTask.planId && tomatoTask.planCategoryId) {
               addCheckIn(`plan-${tomatoTask.planId}-${tomatoTask.name}`, tomatoTask.planCategoryId as any, duration);
             }
             setTomatoTask(null);

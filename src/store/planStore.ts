@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { db } from '../db';
 import { UserPlan, UserPlanTask, CategoryId } from '../types';
-import { AI_TEMPLATES } from '../data/aiTemplates';
+import { CATEGORY_QUESTIONS } from '../data/aiTemplates';
 import { generatePlanFromAI } from '../services/ai';
 
 interface PlanState {
@@ -11,8 +11,7 @@ interface PlanState {
   createPlan: (plan: UserPlan) => Promise<void>;
   updatePlan: (id: number, updates: Partial<UserPlan>) => Promise<void>;
   deletePlan: (id: number) => Promise<void>;
-  getTemplatesByCategory: (categoryId: CategoryId) => typeof AI_TEMPLATES;
-  generateAIPlan: (templateId: string, answers: Record<string, string>) => Promise<{ title: string; tasks: UserPlanTask[] }>;
+  generateAIPlan: (categoryId: CategoryId, answers: Record<string, string>) => Promise<{ title: string; tasks: UserPlanTask[] }>;
   createCustomPlan: () => UserPlan;
 }
 
@@ -43,19 +42,15 @@ export const usePlanStore = create<PlanState>((set, get) => ({
     await get().loadPlans();
   },
 
-  getTemplatesByCategory: (categoryId: CategoryId) => {
-    return AI_TEMPLATES.filter(t => t.categoryId === categoryId);
-  },
-
-  generateAIPlan: async (templateId: string, answers: Record<string, string>) => {
-    const template = AI_TEMPLATES.find(t => t.id === templateId);
-    if (!template) return { title: '默认计划', tasks: [] };
+  generateAIPlan: async (categoryId: CategoryId, answers: Record<string, string>) => {
+    const category = CATEGORY_QUESTIONS.find(c => c.categoryId === categoryId);
+    if (!category) return { title: '默认计划', tasks: [] };
     try {
-      const result = await generatePlanFromAI(template, answers, template.categoryId);
+      const result = await generatePlanFromAI(category.questions, answers, categoryId);
       return result;
     } catch (err: any) {
       console.warn('AI API 调用失败，使用本地模板生成:', err.message);
-      return template.generatePlan(answers);
+      return category.buildPlan(answers);
     }
   },
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useCheckInStore, usePlanStore } from "@/store";
+import { usePlanStore } from "@/store";
 import {
   Brain,
   Plus,
@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/utils";
 import { CATEGORY_STYLES } from "@/utils/categoryStyles";
-import { AI_TEMPLATES } from "@/data/aiTemplates";
+import { CATEGORY_QUESTIONS } from "@/data/aiTemplates";
 import {
   UserPlan,
   UserPlanTask,
@@ -57,10 +57,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
 }) => {
   const { createPlan } = usePlanStore();
   const [step, setStep] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(
-    null
-  );
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [generated, setGenerated] = useState<{
     title: string;
@@ -72,40 +69,29 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
     if (open) {
       setStep(1);
       setSelectedCategory(null);
-      setSelectedTemplate(null);
       setAnswers({});
       setGenerated(null);
       setGenerating(false);
     }
   }, [open]);
 
-  const templates = selectedCategory
-    ? AI_TEMPLATES.filter((t) => t.categoryId === selectedCategory)
-    : [];
-
-  const currentTemplate = selectedTemplate
-    ? AI_TEMPLATES.find((t) => t.id === selectedTemplate)
+  const currentCategory = selectedCategory
+    ? CATEGORY_QUESTIONS.find((c) => c.categoryId === selectedCategory)
     : null;
 
   const handleCategorySelect = (cat: CategoryId) => {
     setSelectedCategory(cat);
-    const tmpls = AI_TEMPLATES.filter((t) => t.categoryId === cat);
-    if (tmpls.length === 1) {
-      setSelectedTemplate(tmpls[0].id);
-      setStep(3);
-    } else {
-      setStep(2);
-    }
+    setStep(2);
   };
 
   const handleGenerate = async () => {
-    if (!selectedTemplate) return;
+    if (!selectedCategory) return;
     setGenerating(true);
     try {
       const { generateAIPlan } = usePlanStore.getState();
-      const result = await generateAIPlan(selectedTemplate, answers);
+      const result = await generateAIPlan(selectedCategory, answers);
       setGenerated(result);
-      setStep(4);
+      setStep(3);
     } catch (err: any) {
       alert('生成失败：' + (err.message || '未知错误'));
     } finally {
@@ -161,9 +147,8 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
             </div>
             <h3 className="text-lg font-semibold text-gray-900">
               {step === 1 && "选择分类"}
-              {step === 2 && "选择模板"}
-              {step === 3 && "回答问题"}
-              {step === 4 && "预览计划"}
+              {step === 2 && "回答生活习惯"}
+              {step === 3 && "预览计划"}
             </h3>
           </div>
           <button
@@ -177,13 +162,13 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
         <div className="p-5 space-y-4">
           {/* Step indicator */}
           <div className="flex items-center justify-center gap-2 mb-2">
-            {[1, 2, 3, 4].map((s) => (
+            {[1, 2, 3].map((s) => (
               <div
                 key={s}
                 className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all",
                   s === step
-                    ? "bg-blue-500 text-white"
+                    ? "bg-orange-500 text-white"
                     : s < step
                     ? "bg-green-100 text-green-600"
                     : "bg-gray-100 text-gray-400"
@@ -227,39 +212,10 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
             </div>
           )}
 
-          {/* Step 2: Template selection */}
-          {step === 2 && (
-            <div className="space-y-3">
-              {templates.map((tmpl) => (
-                <button
-                  key={tmpl.id}
-                  onClick={() => {
-                    setSelectedTemplate(tmpl.id);
-                    setStep(3);
-                  }}
-                  className={cn(
-                    "w-full text-left p-4 rounded-xl border-2 transition-colors",
-                    selectedTemplate === tmpl.id
-                      ? "border-orange-500 bg-orange-50"
-                      : "border-gray-100 bg-white hover:border-orange-200"
-                  )}
-                >
-                  <h4 className="font-semibold text-gray-900">{tmpl.name}</h4>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {tmpl.description}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    {tmpl.questions.length} 个问题
-                  </p>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Step 3: Questions */}
-          {step === 3 && currentTemplate && (
+          {/* Step 2: Lifestyle Questions */}
+          {step === 2 && currentCategory && (
             <div className="space-y-5">
-              {currentTemplate.questions.map((q) => (
+              {currentCategory.questions.map((q) => (
                 <div key={q.key}>
                   <label className="block text-sm font-semibold text-gray-800 mb-3">
                     {q.question}
@@ -271,7 +227,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                         className={cn(
                           "flex items-center p-3 rounded-xl border-2 cursor-pointer transition-all",
                           answers[q.key] === opt.value
-                            ? "border-blue-500 bg-blue-50"
+                            ? "border-orange-500 bg-orange-50"
                             : "border-gray-100 hover:border-gray-200"
                         )}
                       >
@@ -292,12 +248,12 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                           className={cn(
                             "w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3",
                             answers[q.key] === opt.value
-                              ? "border-blue-500"
+                              ? "border-orange-500"
                               : "border-gray-300"
                           )}
                         >
                           {answers[q.key] === opt.value && (
-                            <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
                           )}
                         </div>
                         <span className="text-sm text-gray-700">
@@ -311,8 +267,8 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
             </div>
           )}
 
-          {/* Step 4: Preview */}
-          {step === 4 && generated && (
+          {/* Step 3: Preview */}
+          {step === 3 && generated && (
             <div className="space-y-3">
               <div className="bg-gray-50 rounded-xl p-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -324,7 +280,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                   onChange={(e) =>
                     setGenerated({ ...generated, title: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               {generated.tasks.map((task, idx) => {
@@ -360,7 +316,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                         type="text"
                         value={task.name}
                         onChange={(e) => updateTask(idx, "name", e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                       />
                     </div>
                     <div>
@@ -377,7 +333,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                           )
                         }
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                       />
                     </div>
                     <div>
@@ -393,7 +349,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                             e.target.value as QuadrantType
                           )
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                       >
                         <option value="">未分配</option>
                         {(Object.keys(QUADRANT_LABELS) as QuadrantType[]).map(
@@ -438,13 +394,13 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
             取消
           </button>
           <div className="flex gap-2">
-            {step === 3 && (
+            {step === 2 && (
               <button
                 onClick={handleGenerate}
                 disabled={
                   generating ||
-                  !currentTemplate ||
-                  currentTemplate.questions.some((q) => !answers[q.key])
+                  !currentCategory ||
+                  currentCategory.questions.some((q) => !answers[q.key])
                 }
                 className="px-5 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
@@ -461,7 +417,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                 )}
               </button>
             )}
-            {step === 4 && (
+            {step === 3 && (
               <button
                 onClick={handleSave}
                 className="px-5 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 flex items-center gap-2"
@@ -845,6 +801,11 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
   const [expanded, setExpanded] = useState(false);
   const style = CATEGORY_STYLES[plan.categoryId];
 
+  const uniqueTasks = React.useMemo(
+    () => plan.tasks.filter((t, i, arr) => arr.findIndex((x) => x.name === t.name) === i),
+    [plan.tasks]
+  );
+
   return (
     <div className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden hover:shadow-card-hover transition-shadow">
       <button
@@ -886,7 +847,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
                   {plan.type === "ai-generated" ? "AI" : "自定义"}
                 </span>
                 <span className="text-xs text-gray-400">
-                  {plan.tasks.length} 个任务
+                  {uniqueTasks.length} 个任务
                 </span>
               </div>
             </div>
@@ -924,7 +885,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
           {plan.description && (
             <p className="text-sm text-gray-500 mb-2">{plan.description}</p>
           )}
-          {plan.tasks.map((task, idx) => (
+          {uniqueTasks.map((task, idx) => (
             <div
               key={task.id}
               className={cn(
@@ -982,126 +943,16 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
   );
 };
 
-interface LearningRouteCardProps {
-  title: string;
-  route: string[];
-  resources?: { name: string; url?: string }[];
-}
-
-const LearningRouteCard: React.FC<LearningRouteCardProps> = ({
-  title,
-  route,
-  resources,
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  return (
-    <div className="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-      >
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-            <BookOpen className="w-5 h-5 text-blue-600" />
-          </div>
-          <span className="font-medium text-gray-800 truncate">{title}</span>
-        </div>
-        {isExpanded ? (
-          <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
-        ) : (
-          <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
-        )}
-      </button>
-
-      {isExpanded && (
-        <div className="px-4 pb-4 space-y-3">
-          <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-            {route.map((line, index) => (
-              <p
-                key={index}
-                className={cn(
-                  "text-sm leading-relaxed",
-                  (line.startsWith("Week") ||
-                    line.startsWith("第") ||
-                    line.startsWith("📋") ||
-                    line.startsWith("📦") ||
-                    line.startsWith("🛒") ||
-                    line.startsWith("🔒") ||
-                    line.startsWith("🚀") ||
-                    line.startsWith("📊") ||
-                    line.startsWith("📈") ||
-                    line.startsWith("🎛") ||
-                    line.startsWith("☁") ||
-                    line.startsWith("🎯") ||
-                    line.startsWith("🤖") ||
-                    line.startsWith("⚡"))
-                    ? "font-semibold text-gray-800"
-                    : "text-gray-600"
-                )}
-              >
-                {line || " "}
-              </p>
-            ))}
-          </div>
-          {resources && resources.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {resources.map(
-                (r, ri) =>
-                  r.url && (
-                    <a
-                      key={ri}
-                      href={r.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100"
-                    >
-                      {r.name}
-                    </a>
-                  )
-              )}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
 export const Plan: React.FC = () => {
   const { plans, loading, loadPlans, deletePlan } = usePlanStore();
-  const { tasks, categories } = useCheckInStore();
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const [customDialogOpen, setCustomDialogOpen] = useState(false);
   const [editPlan, setEditPlan] = useState<UserPlan | null>(null);
-  const [routesExpanded, setRoutesExpanded] = useState(false);
-  const [selectedRouteCategory, setSelectedRouteCategory] =
-    useState<string>("all");
   const [selectedModule, setSelectedModule] = useState<string>("all");
 
   useEffect(() => {
     loadPlans();
   }, [loadPlans]);
-
-  const filteredRouteTasks =
-    selectedModule !== "all"
-      ? tasks.filter((t) => t.categoryId === selectedModule && t.learningRoute && t.learningRoute.length > 0)
-      : selectedRouteCategory === "all"
-        ? tasks.filter((t) => t.learningRoute && t.learningRoute.length > 0)
-        : tasks.filter(
-            (t) =>
-              t.categoryId === selectedRouteCategory &&
-              t.learningRoute &&
-              t.learningRoute.length > 0
-          );
-
-  const routeTasksByCategory = filteredRouteTasks.reduce((acc, task) => {
-    if (!acc[task.categoryId]) {
-      acc[task.categoryId] = [];
-    }
-    acc[task.categoryId].push(task);
-    return acc;
-  }, {} as Record<string, typeof filteredRouteTasks>);
 
   const plansByCategory = plans.reduce((acc, plan) => {
     if (selectedModule !== "all" && plan.categoryId !== selectedModule) return acc;
@@ -1124,13 +975,12 @@ export const Plan: React.FC = () => {
   };
 
   const getCategoryColor = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.gradient || "bg-blue-500";
+    const style = CATEGORY_STYLES[categoryId as CategoryId];
+    return style?.gradient || "bg-blue-500";
   };
 
   const getCategoryName = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.name || categoryId;
+    return CATEGORY_NAMES[categoryId as CategoryId] || categoryId;
   };
 
   return (
@@ -1178,12 +1028,12 @@ export const Plan: React.FC = () => {
             )}>
             全部
           </button>
-          {categories.map((cat) => (
-            <button key={cat.id} onClick={() => setSelectedModule(cat.id)}
+          {(Object.keys(CATEGORY_NAMES) as CategoryId[]).map((catId) => (
+            <button key={catId} onClick={() => setSelectedModule(catId)}
               className={cn("px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5",
-                selectedModule === cat.id ? "bg-orange-500 text-white" : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
+                selectedModule === catId ? "bg-orange-500 text-white" : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
               )}>
-              {cat.name}
+              {CATEGORY_NAMES[catId]}
             </button>
           ))}
         </div>
@@ -1239,110 +1089,8 @@ export const Plan: React.FC = () => {
           </div>
         )}
 
-        {/* Built-in Routes Section */}
-        <div className="mb-8">
-          <button
-            onClick={() => setRoutesExpanded(!routesExpanded)}
-            className="w-full flex items-center justify-between p-4 bg-white rounded-xl shadow-card hover:shadow-card-hover transition-shadow"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-50 rounded-lg">
-                <BookOpen className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div className="text-left">
-                <h2 className="text-lg font-bold text-gray-900">{"内置学习路线"}</h2>
-                <p className="text-sm text-gray-500">
-                  {"系统预设的各类学习路线参考"}
-                </p>
-              </div>
-            </div>
-            {routesExpanded ? (
-              <ChevronDown className="w-6 h-6 text-gray-400" />
-            ) : (
-              <ChevronRight className="w-6 h-6 text-gray-400" />
-            )}
-          </button>
-
-          {routesExpanded && (
-            <div className="mt-4">
-              {/* Category filter - only show when "全部" module selected */}
-              {selectedModule === "all" && (
-              <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
-                <button
-                  onClick={() => setSelectedRouteCategory("all")}
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors",
-                    selectedRouteCategory === "all"
-                      ? "bg-orange-500 text-white"
-                      : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
-                  )}
-                >
-                  {"全部"}
-                </button>
-                {categories.map((cat) => {
-                  const style = CATEGORY_STYLES[cat.id];
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSelectedRouteCategory(cat.id)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors",
-                        selectedRouteCategory === cat.id
-                          ? cn(style.bg, "text-white")
-                          : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
-                      )}
-                    >
-                      {cat.name}
-                    </button>
-                  );
-                })}
-              </div>
-              )}
-
-              {/* Tasks by category */}
-              {Object.entries(routeTasksByCategory).map(
-                ([categoryId, categoryTasks]) => {
-                  return (
-                    <div key={categoryId} className="mb-6">
-                      <div
-                        className={cn(
-                          "flex items-center gap-2 mb-3 px-3 py-2 rounded-lg text-white text-sm font-semibold",
-                          getCategoryColor(categoryId)
-                        )}
-                      >
-                        <BookOpen className="w-4 h-4" />
-                        {getCategoryName(categoryId)}
-                        <span className="ml-auto text-xs opacity-80">
-                          {categoryTasks.length} {"个路线"}
-                        </span>
-                      </div>
-                      <div className="space-y-3">
-                        {categoryTasks.map((task) => (
-                          <LearningRouteCard
-                            key={task.id}
-                            title={task.name}
-                            route={task.learningRoute || []}
-                            resources={task.resources}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  );
-                }
-              )}
-
-              {filteredRouteTasks.length === 0 && (
-                <div className="text-center py-12">
-                  <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 text-sm">{"暂无学习路线"}</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
         {/* Empty state */}
-        {plans.length === 0 && !routesExpanded && (
+        {plans.length === 0 && (
           <div className="text-center py-16">
             <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
               <BookOpen className="w-8 h-8 text-orange-400" />

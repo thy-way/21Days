@@ -307,11 +307,11 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
 
             <div className="flex mb-6 bg-gray-100 rounded-xl p-1">
               <button onClick={() => setMode('duration')}
-                className={cn('flex-1 py-2 rounded-lg text-sm font-medium transition-all', mode === 'duration' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500')}>
+                className={cn('flex-1 py-2 rounded-lg text-sm font-medium transition-all', mode === 'duration' ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500')}>
                 按时长
               </button>
               <button onClick={() => setMode('quantity')}
-                className={cn('flex-1 py-2 rounded-lg text-sm font-medium transition-all', mode === 'quantity' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500')}>
+                className={cn('flex-1 py-2 rounded-lg text-sm font-medium transition-all', mode === 'quantity' ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500')}>
                 按数量
               </button>
             </div>
@@ -322,8 +322,8 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
                 <div className="flex items-center space-x-4">
                   <input type="range" min="5" max="180" step="5" value={duration}
                     onChange={(e) => setDuration(Number(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500" />
-                  <span className="text-2xl font-bold text-blue-600 w-16 text-right">{duration}</span>
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500" />
+                  <span className="text-2xl font-bold text-orange-600 w-16 text-right">{duration}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-400 mt-1"><span>5分钟</span><span>180分钟</span></div>
               </div>
@@ -374,7 +374,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
             </div>
 
             <button onClick={handleConfirm}
-              className="w-full py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:opacity-90 transition-opacity">
+              className="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold text-base hover:bg-orange-600 transition-colors">
               确认打卡
             </button>
           </div>
@@ -436,12 +436,12 @@ const ProjectPopup: React.FC<ProjectPopupProps> = ({ open, onClose, subModuleId,
             const isCheckedIn = checkedInTaskIds.includes(task.id);
 
             return (
-              <div key={task.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div key={task.id} className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
                 <div className="p-5">
                   <div className="flex items-center gap-3 mb-4">
                     {TaskIcon && (
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                        <TaskIcon className="w-5 h-5 text-blue-600" />
+                      <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
+                        <TaskIcon className="w-5 h-5 text-orange-500" />
                       </div>
                     )}
                     <div>
@@ -457,7 +457,7 @@ const ProjectPopup: React.FC<ProjectPopupProps> = ({ open, onClose, subModuleId,
                         </span>
                       ) : (
                         <button onClick={() => onCheckIn(task)}
-                          className="px-4 py-1.5 rounded-lg text-xs font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90 transition-opacity">
+                          className="px-4 py-1.5 rounded-lg text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 transition-colors">
                           {'✅ 打卡'}
                         </button>
                       )}
@@ -736,7 +736,7 @@ export const Categories: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-sm">
+            <div className="p-2.5 bg-orange-500 rounded-xl">
               <Zap className="w-6 h-6 text-white" />
             </div>
             21Days<span className="text-sm text-gray-400 font-normal ml-1">{'全部任务'}</span>
@@ -775,7 +775,7 @@ export const Categories: React.FC = () => {
         </div>
 
         {/* Progress Card */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 mb-6 border border-gray-100">
+        <div className="bg-white rounded-xl shadow-card p-5 mb-6 border border-gray-100">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Star className="w-5 h-5 text-yellow-500" />
@@ -814,13 +814,13 @@ export const Categories: React.FC = () => {
 
           {/* Built-in Task Card */}
           {currentTask && (
-            <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100 mb-4">
+            <div className="bg-white rounded-xl shadow-card p-5 border border-gray-100 mb-4">
               <div className="flex items-center gap-3 mb-4">
                 {currentTask.icon && iconMap[currentTask.icon] && (() => {
                   const SubIcon = iconMap[currentTask.icon]!;
                   return (
-                    <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
-                      <SubIcon className="w-5 h-5 text-blue-600" />
+                    <div className="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center">
+                      <SubIcon className="w-5 h-5 text-orange-500" />
                     </div>
                   );
                 })()}
@@ -838,7 +838,7 @@ export const Categories: React.FC = () => {
                   📖 详情
                 </button>
                 <button onClick={() => handleCheckIn(currentTask)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90 transition-opacity">
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 transition-colors">
                   ✅ 打卡
                 </button>
                 {activeTab === 'coding' && (
@@ -865,7 +865,7 @@ export const Categories: React.FC = () => {
               {activePlansForTab.map(plan => {
                 const style = CATEGORY_STYLES[plan.categoryId] || CATEGORY_STYLES.coding;
                 return (
-                  <div key={plan.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div key={plan.id} className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
                     <div className={cn('px-5 py-3 flex items-center gap-2', style.bgLight)}>
                       <BookOpen className={cn('w-4 h-4', style.text)} />
                       <span className={cn('font-semibold text-sm', style.text)}>{plan.title}</span>
@@ -905,7 +905,7 @@ export const Categories: React.FC = () => {
                                 </span>
                               ) : (
                                 <button onClick={() => handlePlanCheckIn(plan, task)}
-                                  className="px-3 py-1 rounded-lg text-xs font-medium text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 transition-opacity">
+                                  className="px-3 py-1 rounded-lg text-xs font-medium text-white bg-orange-500 hover:bg-orange-600 transition-colors">
                                   打卡
                                 </button>
                               )}

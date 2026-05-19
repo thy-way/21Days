@@ -73,7 +73,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-sm overflow-hidden">
         {showSuccess ? (
           <div className="p-8 flex flex-col items-center justify-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -86,18 +86,18 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-gray-900">{planTaskName || task?.name}</h3>
-              <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+              <button onClick={onClose} className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="flex mb-6 bg-gray-100 rounded-xl p-1">
               <button onClick={() => setMode('duration')}
-                className={cn('flex-1 py-2 rounded-lg text-sm font-medium transition-all', mode === 'duration' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500')}>
+                className={cn('flex-1 py-2 rounded-lg text-sm font-medium transition-all', mode === 'duration' ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500')}>
                 按时长
               </button>
               <button onClick={() => setMode('quantity')}
-                className={cn('flex-1 py-2 rounded-lg text-sm font-medium transition-all', mode === 'quantity' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500')}>
+                className={cn('flex-1 py-2 rounded-lg text-sm font-medium transition-all', mode === 'quantity' ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500')}>
                 按数量
               </button>
             </div>
@@ -108,8 +108,8 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
                 <div className="flex items-center space-x-4">
                   <input type="range" min="5" max="180" step="5" value={duration}
                     onChange={(e) => setDuration(Number(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500" />
-                  <span className="text-2xl font-bold text-blue-600 w-16 text-right">{duration}</span>
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500" />
+                  <span className="text-2xl font-bold text-orange-600 w-16 text-right">{duration}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-400 mt-1"><span>5分钟</span><span>180分钟</span></div>
               </div>
@@ -129,7 +129,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">备注（可选）</label>
               <input type="text" placeholder="添加备注..." value={note} onChange={(e) => setNote(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-orange-500" />
             </div>
 
             <div className="mb-4">
@@ -149,7 +149,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors">
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors">
                       <span className="text-3xl mb-2">📷</span>
                       <span className="text-sm text-gray-500">点击上传照片</span>
                       <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
@@ -160,7 +160,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
             </div>
 
             <button onClick={handleConfirm}
-              className="w-full py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:opacity-90 transition-opacity">
+              className="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold text-base hover:bg-orange-600 transition-colors">
               确认打卡
             </button>
           </div>
@@ -195,16 +195,17 @@ const QuadrantCell: React.FC<QuadrantCellProps> = ({
 
   return (
     <div onDragOver={onDragOver} onDrop={() => onDrop(quadrantId)}
-      className={cn('flex flex-col min-h-0 transition-all', headerBg, draggedTask && 'ring-2 ring-inset ring-blue-400')}>
+      className={cn('bg-white rounded-xl shadow-card border border-gray-100 flex flex-col min-h-0 transition-shadow',
+        draggedTask && 'ring-2 ring-orange-400')}>
       {/* 标题栏 */}
-      <div className={cn('flex items-center gap-2 px-4 py-2.5 border-b border-gray-200/50', headerBg)}>
+      <div className={cn('flex items-center gap-2 px-3 py-2 rounded-t-xl', headerBg)}>
         <span className="text-base">{icon}</span>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="font-semibold text-sm text-gray-800">{title}</div>
           <div className="text-xs text-gray-500">{desc}</div>
         </div>
         {taskCount > 0 && (
-          <span className="ml-auto text-xs font-medium text-gray-400 bg-white/60 rounded-full px-2 py-0.5">
+          <span className="text-xs font-medium text-gray-400 bg-white/70 rounded-full px-2 py-0.5">
             {taskCount}
           </span>
         )}
@@ -220,7 +221,7 @@ const QuadrantCell: React.FC<QuadrantCellProps> = ({
       {/* 展开/收起 */}
       {taskCount > 3 && (
         <button onClick={() => setExpanded(!expanded)}
-          className="w-full py-1.5 text-xs text-gray-400 hover:text-gray-600 bg-white/50 border-t border-gray-200/50 transition-colors">
+          className="w-full py-1.5 text-xs text-gray-400 hover:text-gray-600 border-t border-gray-100 transition-colors">
           {expanded ? '收起 ▲' : `展开全部 ${taskCount} 项 ▼`}
         </button>
       )}
@@ -281,8 +282,8 @@ export const Home: React.FC = () => {
         const pt = item as any;
         return (
           <div key={`plan-${pt.planId}-${pt.id}`}
-            className="flex items-center justify-between bg-amber-50 rounded-lg px-2 py-1 text-xs shadow-sm border border-amber-200 mb-1">
-            <span className="truncate text-gray-700 flex items-center gap-1">
+            className="flex items-center justify-between bg-amber-50 rounded-lg px-2.5 py-1.5 text-xs border border-amber-200 mb-1">
+            <span className="truncate text-gray-700 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
               {pt.name}
             </span>
@@ -298,13 +299,13 @@ export const Home: React.FC = () => {
       const task = item as Task;
       return (
         <div key={task.id} draggable onDragStart={() => handleDragStart(task)}
-          className="flex items-center justify-between bg-gray-50 rounded-lg px-2 py-1 text-xs shadow-sm cursor-move hover:bg-gray-100 mb-1">
+          className="flex items-center justify-between bg-gray-50 rounded-lg px-2.5 py-1.5 text-xs cursor-move hover:bg-gray-100 mb-1">
           <span className="truncate text-gray-700">{task.name}</span>
           <div className="flex items-center gap-1 flex-shrink-0">
             <button onClick={() => setTomatoTask({ name: task.name, taskId: task.id, categoryId: task.categoryId })}
               className="px-1 py-0.5 text-orange-500 hover:bg-orange-100 rounded text-xs">🍅</button>
             <button onClick={() => handleCheckIn(task)}
-              className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200">打卡</button>
+              className="px-1.5 py-0.5 bg-gray-200 text-gray-700 rounded text-xs hover:bg-gray-300">打卡</button>
           </div>
         </div>
       );
@@ -320,12 +321,12 @@ export const Home: React.FC = () => {
   const today = new Date();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-sm">
+            <div className="p-2.5 bg-orange-500 rounded-xl">
               <Zap className="w-6 h-6 text-white" />
             </div>
             21Days<span className="text-sm text-gray-400 font-normal ml-1">今日打卡</span>
@@ -342,10 +343,10 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Progress Card */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+        <div className="bg-white rounded-xl shadow-card p-5 mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-yellow-500" />
+              <Star className="w-5 h-5 text-orange-400" />
               <span className="font-medium text-gray-800">今日进度</span>
             </div>
             <span className="font-bold text-gray-800">{completedTasks}/{totalTasks} 项</span>
@@ -360,66 +361,29 @@ export const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* 四象限法则 — XY轴布局 */}
+        {/* 四象限法则 */}
         <div className="mb-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-            <Target className="w-5 h-5 mr-2 text-blue-600" />
+            <Target className="w-5 h-5 mr-2 text-orange-500" />
             四象限法则
           </h2>
 
-          <div className="relative">
-            {/* Y轴标签 */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-              <span className="inline-flex items-center gap-1 px-3 py-1 bg-white rounded-full shadow-sm text-xs font-bold text-gray-700 border border-gray-200">
-                <span className="text-orange-500">▲</span> 重要
-              </span>
-            </div>
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-20">
-              <span className="inline-flex items-center gap-1 px-3 py-1 bg-white rounded-full shadow-sm text-xs font-bold text-gray-700 border border-gray-200">
-                不重要 <span className="text-blue-500">▼</span>
-              </span>
-            </div>
-
-            {/* 四象限卡片 (拆为三层，X轴标签在中间随内容浮动) */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              {/* 第1行：上半部分 */}
-              <div className="grid grid-cols-2 divide-x divide-gray-300">
-                <QuadrantCell quadrantId="urgent-not-important" icon="⚡" title="紧急不重要" desc="尽快处理" headerBg="bg-amber-50"
-                  tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
-                <QuadrantCell quadrantId="urgent-important" icon="🔥" title="重要紧急" desc="立即处理" headerBg="bg-red-50"
-                  tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
-              </div>
-
-              {/* 第2行：X轴标签（随内容浮动） */}
-              <div className="relative h-0">
-                <div className="absolute top-1/2 left-0 right-0 h-px bg-gray-300" />
-                <div className="absolute -top-3 left-1">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white rounded-full text-xs font-bold text-gray-500 border border-gray-200 shadow-sm">
-                    <span className="text-gray-400">◀</span> 不紧急
-                  </span>
-                </div>
-                <div className="absolute -top-3 right-1">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white rounded-full text-xs font-bold text-gray-500 border border-gray-200 shadow-sm">
-                    紧急 <span className="text-gray-400">▶</span>
-                  </span>
-                </div>
-              </div>
-
-              {/* 第3行：下半部分 */}
-              <div className="grid grid-cols-2 divide-x divide-gray-300">
-                <QuadrantCell quadrantId="not-urgent-not-important" icon="🗑️" title="不重要不紧急" desc="减少或删除" headerBg="bg-gray-50"
-                  tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
-                <QuadrantCell quadrantId="not-urgent-important" icon="🎯" title="重要不紧急" desc="规划安排" headerBg="bg-blue-50"
-                  tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
-              </div>
-            </div>
+          <div className="grid grid-cols-2 gap-3">
+            <QuadrantCell quadrantId="urgent-important" icon="🔥" title="重要紧急" desc="立即处理" headerBg="bg-red-50"
+              tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
+            <QuadrantCell quadrantId="urgent-not-important" icon="⚡" title="紧急不重要" desc="尽快处理" headerBg="bg-amber-50"
+              tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
+            <QuadrantCell quadrantId="not-urgent-important" icon="🎯" title="重要不紧急" desc="规划安排" headerBg="bg-blue-50"
+              tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
+            <QuadrantCell quadrantId="not-urgent-not-important" icon="🗑️" title="不重要不紧急" desc="减少或删除" headerBg="bg-gray-50"
+              tasks={tasks} plans={plans} draggedTask={draggedTask} onDragOver={handleDragOver} onDrop={handleDrop} renderTasks={renderQuadrantTasks} />
           </div>
         </div>
 
         {/* 查看全部任务 */}
         <div className="text-center">
           <a href="/categories"
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white rounded-xl shadow-sm text-sm font-medium text-gray-600 hover:text-gray-900 hover:shadow-md transition-all">
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white rounded-xl shadow-card text-sm font-medium text-gray-500 hover:text-gray-700 hover:shadow-card-hover transition-shadow">
             <Target className="w-4 h-4" />
             查看全部任务
           </a>

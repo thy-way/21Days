@@ -144,7 +144,7 @@ export const Stats: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl shadow-sm">
+            <div className="p-2.5 bg-purple-500 rounded-xl">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             复盘总结
@@ -153,7 +153,7 @@ export const Stats: React.FC = () => {
         </div>
 
         {/* Weekly Summary Card */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+        <div className="bg-white rounded-xl shadow-card p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-800">本周概况</h2>
             <div className="flex items-center gap-2">
@@ -192,7 +192,7 @@ export const Stats: React.FC = () => {
         </div>
 
         {/* Week Calendar View */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+        <div className="bg-white rounded-xl shadow-card p-5 mb-6">
           <div className="grid grid-cols-7 gap-2">
             {weekDays.map((day) => {
               const dateStr = format(day, 'yyyy-MM-dd');
@@ -233,7 +233,7 @@ export const Stats: React.FC = () => {
 
         {/* Daily Detail View */}
         {selectedDay && (
-          <div className="bg-white rounded-2xl shadow-sm p-5">
+          <div className="bg-white rounded-xl shadow-card p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-blue-600" />
@@ -381,7 +381,7 @@ export const Stats: React.FC = () => {
 
         {/* Summary History */}
         {allSummaries.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-5 mt-6">
+          <div className="bg-white rounded-xl shadow-card p-5 mt-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
               <Book className="w-5 h-5 text-blue-600" />
               历史总结记录

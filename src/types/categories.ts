@@ -6,7 +6,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: '健身',
     icon: 'Dumbbell',
     color: '#ef4444',
-    gradient: 'from-red-500 to-rose-600',
+    gradient: 'bg-red-500',
     enabled: true,
   },
   {
@@ -14,7 +14,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: '编程学习',
     icon: 'Code',
     color: '#3b82f6',
-    gradient: 'from-blue-500 to-indigo-600',
+    gradient: 'bg-blue-500',
     enabled: true,
   },
   {
@@ -22,7 +22,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: '英语',
     icon: 'Globe',
     color: '#22c55e',
-    gradient: 'from-green-500 to-emerald-600',
+    gradient: 'bg-green-500',
     enabled: true,
   },
   {
@@ -30,7 +30,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: '考试',
     icon: 'GraduationCap',
     color: '#8b5cf6',
-    gradient: 'from-purple-500 to-violet-600',
+    gradient: 'bg-purple-500',
     enabled: true,
   },
   {
@@ -38,7 +38,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
     name: '副业',
     icon: 'Briefcase',
     color: '#f59e0b',
-    gradient: 'from-amber-500 to-orange-600',
+    gradient: 'bg-amber-500',
     enabled: true,
   },
 ];

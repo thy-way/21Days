@@ -145,7 +145,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
             {step > 1 && (
@@ -156,7 +156,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                 <ChevronLeft className="w-5 h-5" />
               </button>
             )}
-            <div className="p-2 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl">
+            <div className="p-2 bg-purple-50 rounded-lg">
               <Brain className="w-5 h-5 text-purple-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">
@@ -204,10 +204,10 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                     key={cat}
                     onClick={() => handleCategorySelect(cat)}
                     className={cn(
-                      "flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all",
+                      "flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors",
                       selectedCategory === cat
-                        ? "border-blue-500 bg-blue-50 shadow-md"
-                        : "border-gray-100 bg-white hover:border-blue-200 hover:shadow-sm"
+                        ? "border-orange-500 bg-orange-50"
+                        : "border-gray-100 bg-white hover:border-orange-200"
                     )}
                   >
                     <div
@@ -238,10 +238,10 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                     setStep(3);
                   }}
                   className={cn(
-                    "w-full text-left p-4 rounded-2xl border-2 transition-all",
+                    "w-full text-left p-4 rounded-xl border-2 transition-colors",
                     selectedTemplate === tmpl.id
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-100 bg-white hover:border-blue-200"
+                      ? "border-orange-500 bg-orange-50"
+                      : "border-gray-100 bg-white hover:border-orange-200"
                   )}
                 >
                   <h4 className="font-semibold text-gray-900">{tmpl.name}</h4>
@@ -446,7 +446,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                   !currentTemplate ||
                   currentTemplate.questions.some((q) => !answers[q.key])
                 }
-                className="px-5 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-5 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {generating ? (
                   <>
@@ -464,7 +464,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
             {step === 4 && (
               <button
                 onClick={handleSave}
-                className="px-5 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl text-sm font-medium hover:opacity-90 flex items-center gap-2"
+                className="px-5 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 flex items-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 保存计划
@@ -609,11 +609,11 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-amber-100 to-orange-100 rounded-xl">
-              <Plus className="w-5 h-5 text-amber-600" />
+            <div className="p-2 bg-orange-50 rounded-lg">
+              <Plus className="w-5 h-5 text-orange-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">
               {isEdit ? "编辑计划" : "自定义计划"}
@@ -824,7 +824,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
           <button
             onClick={handleSave}
             disabled={!title.trim() || tasks.length === 0}
-            className="px-5 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-5 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             <Save className="w-4 h-4" />
             {isEdit ? "保存修改" : "创建计划"}
@@ -846,7 +846,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
   const style = CATEGORY_STYLES[plan.categoryId];
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden hover:shadow-card-hover transition-shadow">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full text-left p-5"
@@ -996,7 +996,7 @@ const LearningRouteCard: React.FC<LearningRouteCardProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+    <div className="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
@@ -1125,7 +1125,7 @@ export const Plan: React.FC = () => {
 
   const getCategoryColor = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);
-    return category?.gradient || "from-blue-500 to-indigo-600";
+    return category?.gradient || "bg-blue-500";
   };
 
   const getCategoryName = (categoryId: string) => {
@@ -1134,13 +1134,13 @@ export const Plan: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="p-2.5 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-sm">
+              <div className="p-2.5 bg-emerald-500 rounded-xl">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               {"学习计划"}
@@ -1152,7 +1152,7 @@ export const Plan: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setAiDialogOpen(true)}
-              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl text-sm font-medium hover:opacity-90 flex items-center gap-2 shadow-md"
+              className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 flex items-center gap-2"
             >
               <Brain className="w-4 h-4" />
               <span className="hidden sm:inline">AI {"生成"}</span>
@@ -1162,7 +1162,7 @@ export const Plan: React.FC = () => {
                 setEditPlan(null);
                 setCustomDialogOpen(true);
               }}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl text-sm font-medium hover:opacity-90 flex items-center gap-2 shadow-md"
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">{"自定义"}</span>
@@ -1173,15 +1173,15 @@ export const Plan: React.FC = () => {
         {/* Module Tab Bar */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
           <button onClick={() => setSelectedModule("all")}
-            className={cn("px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all",
-              selectedModule === "all" ? "bg-blue-600 text-white shadow-md" : "bg-white text-gray-600 hover:bg-gray-50"
+            className={cn("px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors",
+              selectedModule === "all" ? "bg-orange-500 text-white" : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
             )}>
             全部
           </button>
           {categories.map((cat) => (
             <button key={cat.id} onClick={() => setSelectedModule(cat.id)}
-              className={cn("px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5",
-                selectedModule === cat.id ? "bg-blue-600 text-white shadow-md" : "bg-white text-gray-600 hover:bg-gray-50"
+              className={cn("px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5",
+                selectedModule === cat.id ? "bg-orange-500 text-white" : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
               )}>
               {cat.name}
             </button>
@@ -1192,7 +1192,7 @@ export const Plan: React.FC = () => {
         {plans.length > 0 && (
           <div className="mb-8">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-blue-600" />
+              <BookOpen className="w-5 h-5 text-orange-500" />
               {"我的计划"}
               <span className="text-sm font-normal text-gray-400 ml-1">
                 ({plans.length})
@@ -1201,7 +1201,7 @@ export const Plan: React.FC = () => {
 
             {loading ? (
               <div className="text-center py-12">
-                <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-3" />
+                <div className="w-8 h-8 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin mx-auto mb-3" />
                 <p className="text-gray-500 text-sm">{"加载中..."}</p>
               </div>
             ) : (
@@ -1211,7 +1211,7 @@ export const Plan: React.FC = () => {
                     <div key={categoryId}>
                       <div
                         className={cn(
-                          "flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-gradient-to-r text-white text-sm font-semibold",
+                          "flex items-center gap-2 mb-3 px-3 py-2 rounded-lg text-white text-sm font-semibold",
                           getCategoryColor(categoryId)
                         )}
                       >
@@ -1243,10 +1243,10 @@ export const Plan: React.FC = () => {
         <div className="mb-8">
           <button
             onClick={() => setRoutesExpanded(!routesExpanded)}
-            className="w-full flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between p-4 bg-white rounded-xl shadow-card hover:shadow-card-hover transition-shadow"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl">
+              <div className="p-2 bg-emerald-50 rounded-lg">
                 <BookOpen className="w-5 h-5 text-emerald-600" />
               </div>
               <div className="text-left">
@@ -1271,10 +1271,10 @@ export const Plan: React.FC = () => {
                 <button
                   onClick={() => setSelectedRouteCategory("all")}
                   className={cn(
-                    "px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all",
+                    "px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors",
                     selectedRouteCategory === "all"
-                      ? "bg-blue-600 text-white shadow-md"
-                      : "bg-white text-gray-600 hover:bg-gray-50"
+                      ? "bg-orange-500 text-white"
+                      : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
                   )}
                 >
                   {"全部"}
@@ -1286,10 +1286,10 @@ export const Plan: React.FC = () => {
                       key={cat.id}
                       onClick={() => setSelectedRouteCategory(cat.id)}
                       className={cn(
-                        "px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all",
+                        "px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors",
                         selectedRouteCategory === cat.id
-                          ? cn(style.bg, "text-white shadow-md")
-                          : "bg-white text-gray-600 hover:bg-gray-50"
+                          ? cn(style.bg, "text-white")
+                          : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
                       )}
                     >
                       {cat.name}
@@ -1306,7 +1306,7 @@ export const Plan: React.FC = () => {
                     <div key={categoryId} className="mb-6">
                       <div
                         className={cn(
-                          "flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-gradient-to-r text-white text-sm font-semibold",
+                          "flex items-center gap-2 mb-3 px-3 py-2 rounded-lg text-white text-sm font-semibold",
                           getCategoryColor(categoryId)
                         )}
                       >
@@ -1344,8 +1344,8 @@ export const Plan: React.FC = () => {
         {/* Empty state */}
         {plans.length === 0 && !routesExpanded && (
           <div className="text-center py-16">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Target className="w-10 h-10 text-blue-500" />
+            <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <BookOpen className="w-8 h-8 text-orange-400" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               {"还没有学习计划"}
@@ -1356,7 +1356,7 @@ export const Plan: React.FC = () => {
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => setAiDialogOpen(true)}
-                className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl text-sm font-medium hover:opacity-90 flex items-center gap-2 shadow-md"
+                className="px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
                 AI {"生成"}

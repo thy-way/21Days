@@ -115,7 +115,7 @@ export const Settings: React.FC = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-gray-600 to-slate-700 rounded-xl shadow-sm">
+            <div className="p-2.5 bg-gray-600 rounded-xl">
               <SettingsIcon className="w-6 h-6 text-white" />
             </div>
             设置
@@ -124,12 +124,12 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* Profile Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-card p-5 sm:p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {/* Avatar */}
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-4xl overflow-hidden">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-4xl overflow-hidden">
                   {isCustomAvatar ? (
                     <img src={profile.avatar} alt="avatar" className="w-full h-full object-cover" />
                   ) : (
@@ -138,7 +138,7 @@ export const Settings: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setEditProfileOpen(true)}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-md hover:bg-blue-600 transition-colors"
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white shadow-md hover:bg-orange-600 transition-colors"
                 >
                   <Camera className="w-4 h-4" />
                 </button>
@@ -159,7 +159,7 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* Streak */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-card p-5 sm:p-6 mb-6">
           <div className="flex items-center justify-center py-4">
             <div className="text-center">
               <div className="flex items-center justify-center space-x-2 text-orange-500 mb-2">
@@ -171,7 +171,7 @@ export const Settings: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-card p-5 sm:p-6 mb-6">
           <h2 className="font-semibold text-gray-900 mb-4">📂 分类管理</h2>
           <div className="space-y-3">
             {categories.map((cat) => {
@@ -203,7 +203,7 @@ export const Settings: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-card p-5 sm:p-6 mb-6">
           <h2 className="font-semibold text-gray-900 mb-4">🔔 提醒设置</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -301,7 +301,7 @@ export const Settings: React.FC = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">头像</label>
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-3xl overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-3xl overflow-hidden">
                 {isCustomAvatar ? (
                   <img src={profile.avatar} alt="avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -311,7 +311,7 @@ export const Settings: React.FC = () => {
               <div className="flex-1">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                  className="w-full px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
                 >
                   上传照片
                 </button>
@@ -404,7 +404,7 @@ export const Settings: React.FC = () => {
             </button>
             <button
               onClick={handleSaveProfile}
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
             >
               保存
             </button>

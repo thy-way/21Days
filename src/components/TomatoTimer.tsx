@@ -73,8 +73,8 @@ export const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, o
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
-        <div className="bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 p-6 text-white text-center">
+      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-sm overflow-hidden">
+        <div className="bg-orange-500 p-6 text-white text-center">
           <button onClick={onClose} className="absolute top-4 right-4 p-1 text-white/80 hover:text-white">
             <X className="w-5 h-5" />
           </button>
@@ -129,7 +129,7 @@ export const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, o
                 <Check className="w-5 h-5" /><span className="font-medium">专注完成！</span>
               </div>
               <button onClick={handleFinish}
-                className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:opacity-90 transition-opacity">
+                className="w-full py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors">
                 记录并打卡
               </button>
             </div>
@@ -146,7 +146,7 @@ export const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, o
             </div>
           ) : (
             <button onClick={startTimer}
-              className="w-full py-3 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-xl font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+              className="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
               <Play className="w-4 h-4" />开始专注
             </button>
           )}

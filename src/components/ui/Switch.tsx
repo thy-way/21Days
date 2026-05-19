@@ -27,7 +27,7 @@ export const Switch: React.FC<SwitchProps> = ({
         <div
           className={cn(
             'w-11 h-6 rounded-full transition-colors',
-            checked ? 'bg-blue-500' : 'bg-gray-200',
+            checked ? 'bg-orange-500' : 'bg-gray-200',
             disabled && 'opacity-50 cursor-not-allowed'
           )}
         />

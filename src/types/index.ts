@@ -36,18 +36,7 @@ export interface CheckIn {
   createdAt: number;
 }
 
-export interface CheckIn {
-  id?: number;
-  taskId: string;
-  categoryId: CategoryId;
-  date: string;
-  timestamp: number;
-  note?: string;
-  duration?: number;
-  quantity?: number;
-  photo?: string;
-  createdAt: number;
-}
+
 
 export interface Category {
   id: CategoryId;

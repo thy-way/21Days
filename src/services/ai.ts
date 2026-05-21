@@ -6,6 +6,7 @@
 // ============================================================
 
 import { AIQuestion, CategoryId, UserPlanTask } from '@/types';
+import { CATEGORY_NAMES } from '@/constants/categories';
 
 // >>> 在项目根目录 .env 文件中配置你的 key <<<
 // VITE_MINIMAX_API_KEY=你的key
@@ -16,14 +17,6 @@ const MINIMAX_API_KEY = import.meta.env.VITE_MINIMAX_API_KEY as string;
 // 开发时: /api/minimax → Vite proxy → https://api.minimax.io
 // 部署时: 需添加 Vercel Serverless Function 或改用直连
 const API_BASE_URL = '/api/minimax/v1/chat/completions';
-
-const CATEGORY_NAMES: Record<CategoryId, string> = {
-  fitness: '健身',
-  coding: '编程学习',
-  english: '英语',
-  exam: '考试备考',
-  side: '副业',
-};
 
 function buildPrompt(
   categoryId: CategoryId,

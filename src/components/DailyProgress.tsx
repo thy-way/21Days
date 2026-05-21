@@ -49,7 +49,7 @@ export const DailyProgress: React.FC<DailyProgressProps> = ({
           <div
             className={cn(
               'h-3 rounded-full transition-all duration-500',
-              isAllCompleted ? 'bg-green-500' : 'bg-blue-500'
+              isAllCompleted ? 'bg-green-500' : 'brand-gradient'
             )}
             style={{ width: `${progress}%` }}
           />

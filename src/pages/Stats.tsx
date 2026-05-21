@@ -4,7 +4,7 @@ import { zhCN } from 'date-fns/locale';
 import { useCheckInStore } from '@/store';
 import { CheckIn, DailySummary } from '@/types';
 import { cn } from '@/utils';
-import { Calendar, Target, FileText, ChevronLeft, ChevronRight, Save, Edit3, Book, TrendingUp } from 'lucide-react';
+import { Calendar, Target, FileText, ChevronLeft, ChevronRight, ChevronDown, Save, Edit3, Book, BarChart3, Check } from 'lucide-react';
 
 interface DailyRecord {
   date: string;
@@ -34,6 +34,7 @@ export const Stats: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [allSummaries, setAllSummaries] = useState<DailySummary[]>([]);
+  const [showAllSummaries, setShowAllSummaries] = useState(false);
   const [selectedDaySummaries, setSelectedDaySummaries] = useState<DailySummary[]>([]);
   const [editingComments, setEditingComments] = useState<Record<number, string>>({});
   const [savingCommentId, setSavingCommentId] = useState<number | null>(null);
@@ -139,21 +140,24 @@ export const Stats: React.FC = () => {
   const completedDays = weeklyRecords.filter(r => r.totalCount > 0).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-purple-500 rounded-xl">
-              <TrendingUp className="w-6 h-6 text-white" />
+            <div className="p-2.5 bg-orange-500 rounded-xl">
+              <BarChart3 className="w-6 h-6 text-white" />
             </div>
-            复盘总结
+            <div>
+              <span className="brand-text-gradient">21Days</span>
+              <span className="text-gray-400 text-base font-normal ml-2">复盘总结</span>
+            </div>
           </h1>
-          <p className="text-gray-600 mt-1">回顾每日打卡，分析成长轨迹</p>
+          <p className="text-amber-600/60 mt-1 text-sm">回顾每日打卡，分析成长轨迹</p>
         </div>
 
         {/* Weekly Summary Card */}
-        <div className="bg-white rounded-xl shadow-card p-5 mb-6">
+        <div className="card-warm p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-800">本周概况</h2>
             <div className="flex items-center gap-2">
@@ -176,23 +180,23 @@ export const Stats: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-blue-50 rounded-xl">
-              <div className="text-3xl font-bold text-blue-600">{weeklyTotal}</div>
-              <div className="text-sm text-gray-600 mt-1">本周打卡</div>
+            <div className="text-center p-4 bg-white rounded-xl border border-gray-200">
+              <div className="text-3xl font-bold text-gray-800">{weeklyTotal}</div>
+              <div className="text-sm text-gray-500 mt-1">本周打卡</div>
             </div>
-            <div className="text-center p-4 bg-green-50 rounded-xl">
-              <div className="text-3xl font-bold text-green-600">{weeklyAvg}</div>
-              <div className="text-sm text-gray-600 mt-1">日均打卡</div>
+            <div className="text-center p-4 bg-white rounded-xl border border-gray-200">
+              <div className="text-3xl font-bold text-gray-800">{weeklyAvg}</div>
+              <div className="text-sm text-gray-500 mt-1">日均打卡</div>
             </div>
-            <div className="text-center p-4 bg-purple-50 rounded-xl">
-              <div className="text-3xl font-bold text-purple-600">{completedDays}/7</div>
-              <div className="text-sm text-gray-600 mt-1">打卡天数</div>
+            <div className="text-center p-4 bg-white rounded-xl border border-gray-200">
+              <div className="text-3xl font-bold text-gray-800">{completedDays}/7</div>
+              <div className="text-sm text-gray-500 mt-1">打卡天数</div>
             </div>
           </div>
         </div>
 
         {/* Week Calendar View */}
-        <div className="bg-white rounded-xl shadow-card p-5 mb-6">
+        <div className="card-warm p-5 mb-6">
           <div className="grid grid-cols-7 gap-2">
             {weekDays.map((day) => {
               const dateStr = format(day, 'yyyy-MM-dd');
@@ -208,11 +212,11 @@ export const Stats: React.FC = () => {
                   className={cn(
                     'p-3 rounded-xl text-center transition-all',
                     isSelected
-                      ? 'bg-blue-600 text-white'
+                      ? 'brand-gradient text-white'
                       : hasCheckIns
-                        ? 'bg-blue-50 text-gray-800'
+                        ? 'bg-orange-50 text-gray-800'
                         : 'bg-gray-50 text-gray-400',
-                    isToday && !isSelected && 'ring-2 ring-blue-400'
+                    isToday && !isSelected && 'ring-2 ring-orange-400'
                   )}
                 >
                   <div className="text-xs mb-1">{format(day, 'EEE', { locale: zhCN })}</div>
@@ -233,10 +237,10 @@ export const Stats: React.FC = () => {
 
         {/* Daily Detail View */}
         {selectedDay && (
-          <div className="bg-white rounded-xl shadow-card p-5">
+          <div className="card-warm p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-blue-600" />
+                <Calendar className="w-5 h-5 text-orange-500" />
                 {format(parseISO(selectedDay), 'yyyy年MM月dd日 EEEE', { locale: zhCN })}
               </h2>
               <div className="flex items-center gap-3 text-sm text-gray-500">
@@ -280,12 +284,12 @@ export const Stats: React.FC = () => {
                                 value={editingComments[checkIn.id!] ?? ''}
                                 onChange={(e) => setEditingComments(prev => ({ ...prev, [checkIn.id!]: e.target.value }))}
                                 placeholder="添加评论..."
-                                className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                               />
                               <button
                                 onClick={() => handleSaveComment(checkIn.id!)}
                                 disabled={savingCommentId === checkIn.id || !(editingComments[checkIn.id!] ?? '').trim()}
-                                className="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors disabled:opacity-50"
+                                className="px-3 py-1.5 brand-gradient text-white rounded-lg text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
                               >
                                 保存
                               </button>
@@ -355,12 +359,12 @@ export const Stats: React.FC = () => {
                   今日总结
                 </h3>
                 {saved ? (
-                  <span className="text-green-600 text-sm">✅ 保存成功</span>
+                  <span className="flex items-center gap-1 text-green-600 text-sm"><Check className="w-4 h-4" /> 保存成功</span>
                 ) : (
                   <button
                     onClick={handleSaveSummary}
                     disabled={isSaving}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1 px-3 py-1.5 brand-gradient text-white rounded-lg text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
                     <Save className="w-3.5 h-3.5" />
                     {isSaving ? '保存中...' : '提交'}
@@ -370,7 +374,7 @@ export const Stats: React.FC = () => {
               <textarea
                 value={dailySummary}
                 onChange={(e) => setDailySummary(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                className="w-full px-4 py-3 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none text-sm"
                 rows={4}
                 placeholder={`记录 ${selectedDay ? format(parseISO(selectedDay), 'M月d日', { locale: zhCN }) : ''} 的收获与反思...`}
               />
@@ -381,13 +385,29 @@ export const Stats: React.FC = () => {
 
         {/* Summary History */}
         {allSummaries.length > 0 && (
-          <div className="bg-white rounded-xl shadow-card p-5 mt-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <Book className="w-5 h-5 text-blue-600" />
-              历史总结记录
-            </h2>
+          <div className="card-warm p-5 mt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <Book className="w-5 h-5 text-orange-500" />
+                历史总结记录
+              </h2>
+              {allSummaries.length > 3 && (
+                <button
+                  onClick={() => setShowAllSummaries(!showAllSummaries)}
+                  className="text-sm text-orange-500 hover:text-orange-600 font-medium flex items-center gap-1"
+                >
+                  {showAllSummaries ? '收起' : `展开全部 ${allSummaries.length} 条`}
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 transition-transform",
+                      showAllSummaries && "rotate-180"
+                    )}
+                  />
+                </button>
+              )}
+            </div>
             <div className="space-y-3">
-              {allSummaries.map((s) => (
+              {(showAllSummaries ? allSummaries : allSummaries.slice(-3)).map((s) => (
                 <div
                   key={s.id}
                   className="p-4 bg-gray-50 rounded-xl border border-gray-100"

@@ -4,12 +4,12 @@ import { zhCN } from 'date-fns/locale';
 import {
   Code, Globe, GraduationCap, Dumbbell, Briefcase,
   BookOpen, Clock, Flame, Check, X, Star, Target, Zap,
-  ChevronDown, ChevronUp,
+  ChevronDown, ChevronUp, TrendingUp, Camera,
 } from 'lucide-react';
 import { useCheckInStore, usePlanStore } from '@/store';
 import { UserPlanTask, UserPlan, CategoryId } from '@/types';
 import { cn } from '@/utils';
-import { CATEGORY_STYLES } from '@/utils/categoryStyles';
+import { CATEGORY_STYLES, getCategoryStyles } from '@/utils/categoryStyles';
 
 const CATEGORY_TABS = [
   { id: 'coding', label: '编程学习', icon: Code },
@@ -131,7 +131,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
             <div className="mb-4">
               <button type="button" onClick={() => setShowPhotoInput(!showPhotoInput)}
                 className="flex items-center text-sm text-gray-500 hover:text-gray-700">
-                <span className="mr-2">📷</span>
+                <Camera className="w-4 h-4 mr-1.5" />
                 {photo ? '更换照片' : '添加照片（可选）'}
               </button>
               {showPhotoInput && (
@@ -146,7 +146,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
                     </div>
                   ) : (
                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors">
-                      <span className="text-3xl mb-2">📷</span>
+                      <Camera className="w-8 h-8 mb-2 text-orange-400" />
                       <span className="text-sm text-gray-500">点击上传照片</span>
                       <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
                     </label>
@@ -178,7 +178,7 @@ interface PlanTaskDetailDialogProps {
 const PlanTaskDetailDialog: React.FC<PlanTaskDetailDialogProps> = ({ open, onClose, plan, task }) => {
   if (!open || !task || !plan) return null;
 
-  const style = CATEGORY_STYLES[plan.categoryId] || CATEGORY_STYLES.coding;
+  const style = getCategoryStyles(plan.categoryId);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -281,7 +281,7 @@ const PlanTaskDetailDialog: React.FC<PlanTaskDetailDialogProps> = ({ open, onClo
 export const Categories: React.FC = () => {
   const { todayCheckIns, streak, addCheckIn } = useCheckInStore();
   const { plans, loadPlans } = usePlanStore();
-  const [activeTab, setActiveTab] = useState<CategoryId>('coding');
+  const [activeTab, setActiveTab] = useState<string>('coding');
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [planDetailOpen, setPlanDetailOpen] = useState(false);
   const [planDetailTask, setPlanDetailTask] = useState<{ plan: UserPlan; task: UserPlanTask } | null>(null);
@@ -347,18 +347,25 @@ export const Categories: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-orange-500 rounded-xl">
-              <Zap className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="p-2.5 bg-orange-500 rounded-xl">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="brand-text-gradient">21Days</span>
+                <span className="text-sm text-gray-400 font-normal ml-2">全部任务</span>
+              </div>
+            </h1>
+              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 px-2.5 py-1 bg-gray-50 rounded-full border border-gray-200">
+                <Flame className="w-3.5 h-3.5 text-orange-500" />
+                <span className="font-semibold text-orange-600 text-sm">{streak}</span>
+                <span className="text-gray-400 text-xs">天</span>
+              </div>
             </div>
-            21Days<span className="text-sm text-gray-400 font-normal ml-1">全部任务</span>
-            <div className="flex items-center gap-1.5 text-base ml-auto text-orange-500">
-              <Flame className="w-5 h-5" />
-              <span className="font-bold">{streak}</span>
-              <span className="text-gray-400 font-normal">天</span>
-            </div>
-          </h1>
-          <p className="text-gray-500 mt-1 flex items-center gap-1.5">
+          </div>
+          <p className="text-amber-600/60 mt-2 flex items-center gap-1.5 text-sm">
             <Clock className="w-4 h-4" />
             {format(today, 'yyyy年M月d日 EEEE', { locale: zhCN })}
           </p>
@@ -387,21 +394,27 @@ export const Categories: React.FC = () => {
         </div>
 
         {/* Progress Card */}
-        <div className="bg-white rounded-xl shadow-card p-5 mb-6 border border-gray-100">
+        <div className="card-warm p-5 mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-orange-400" />
-              <span className="font-medium text-gray-800">今日进度</span>
+              <TrendingUp className="w-5 h-5 text-orange-500" />
+              <span className="font-semibold text-gray-800">今日进度</span>
             </div>
-            <span className="font-bold text-gray-800">{completedPlanTasks}/{totalPlanTasks} 项</span>
+            <span className="font-bold text-orange-600">{completedPlanTasks}/{totalPlanTasks} 项</span>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 transition-all duration-700"
+          <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div className="h-full rounded-full brand-gradient transition-all duration-700 shadow-sm"
               style={{ width: `${totalPlanTasks > 0 ? (completedPlanTasks / totalPlanTasks) * 100 : 0}%` }} />
           </div>
-          <div className="flex justify-between mt-2 text-sm text-gray-500">
-            <span>已完成 {Math.round(totalPlanTasks > 0 ? (completedPlanTasks / totalPlanTasks) * 100 : 0)}%</span>
-            <span>{totalPlanTasks > 0 && completedPlanTasks >= totalPlanTasks ? '🎉 全部完成！' : '加油！'}</span>
+          <div className="flex justify-between mt-2 text-sm">
+            <span className="text-gray-500">已完成 {Math.round(totalPlanTasks > 0 ? (completedPlanTasks / totalPlanTasks) * 100 : 0)}%</span>
+            <span className="text-gray-600 font-medium">
+              {totalPlanTasks > 0 && completedPlanTasks >= totalPlanTasks ? (
+                <span className="flex items-center gap-1">
+                  <Check className="w-4 h-4" /> 全部完成！
+                </span>
+              ) : '保持节奏，坚持下去 💪'}
+            </span>
           </div>
         </div>
 
@@ -409,7 +422,7 @@ export const Categories: React.FC = () => {
         {activePlansForTab.length > 0 ? (
           <div className="space-y-4">
             {activePlansForTab.map(plan => {
-              const style = CATEGORY_STYLES[plan.categoryId] || CATEGORY_STYLES.coding;
+              const style = getCategoryStyles(plan.categoryId);
               return (
                 <div key={plan.id} className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden">
                   {/* Plan Header */}
@@ -427,14 +440,14 @@ export const Categories: React.FC = () => {
                       const isExpanded = expandedTasks.has(task.id);
                       return (
                         <div key={task.id}
-                          className="bg-amber-50 rounded-xl border border-amber-200 overflow-hidden">
+                          className="bg-orange-50/50 rounded-xl border border-orange-200 overflow-hidden">
                           {/* Clickable Task Header */}
                           <button onClick={() => toggleTaskExpand(task.id)}
                             className="w-full flex items-center justify-between px-4 py-3 hover:bg-amber-100/50 transition-colors">
                             <div className="flex items-center gap-2 min-w-0 flex-1 text-left">
                               <span className={cn(
                                 'w-2 h-2 rounded-full flex-shrink-0',
-                                isCheckedIn ? 'bg-green-500' : 'bg-amber-400'
+                                isCheckedIn ? 'bg-green-500' : 'bg-orange-400'
                               )} />
                               <span className={cn(
                                 'text-sm font-medium truncate',
@@ -472,7 +485,7 @@ export const Categories: React.FC = () => {
 
                           {/* Collapsible Content */}
                           {isExpanded && (
-                            <div className="border-t border-amber-200/50">
+                            <div className="border-t border-orange-200/50">
                               {/* Learning Route Preview */}
                               {task.learningRoute && task.learningRoute.length > 0 && (
                                 <div className="px-4 pt-2 pb-1">

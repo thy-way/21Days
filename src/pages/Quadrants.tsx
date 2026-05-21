@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Calendar, Trash2, Edit2, CheckCircle, Circle } from 'lucide-react';
+import { Plus, Calendar, Trash2, Edit2, CheckCircle, Circle, AlertTriangle, Zap, Target, Minus, LayoutGrid } from 'lucide-react';
 import { useQuadrantStore } from '@/store';
 import { useCheckInStore } from '@/store';
 import { QuadrantTask } from '@/types';
 import { cn } from '@/utils';
+
+const Q_ICONS: Record<string, React.ComponentType<any>> = {
+  AlertTriangle, Zap, Target, Minus,
+};
 
 const QUADRANTS = [
   {
@@ -14,17 +18,17 @@ const QUADRANTS = [
     bgColor: 'bg-red-50',
     borderColor: 'border-red-200',
     textColor: 'text-red-700',
-    icon: '🔥',
+    icon: 'AlertTriangle',
   },
   {
     id: 'urgent-not-important' as const,
     title: '紧急不重要',
     description: '尽快处理',
     color: 'from-yellow-500 to-amber-600',
-    bgColor: 'bg-yellow-50',
-    borderColor: 'border-yellow-200',
-    textColor: 'text-yellow-700',
-    icon: '⚡',
+    bgColor: 'bg-amber-50',
+    borderColor: 'border-amber-200',
+    textColor: 'text-amber-700',
+    icon: 'Zap',
   },
   {
     id: 'not-urgent-important' as const,
@@ -34,7 +38,7 @@ const QUADRANTS = [
     bgColor: 'bg-blue-50',
     borderColor: 'border-blue-200',
     textColor: 'text-blue-700',
-    icon: '🎯',
+    icon: 'Target',
   },
   {
     id: 'not-urgent-not-important' as const,
@@ -44,7 +48,7 @@ const QUADRANTS = [
     bgColor: 'bg-gray-50',
     borderColor: 'border-gray-200',
     textColor: 'text-gray-700',
-    icon: '🗑️',
+    icon: 'Minus',
   },
 ];
 
@@ -92,21 +96,29 @@ export const Quadrants: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 p-4 sm:p-6">
+      <div className="min-h-screen brand-gradient-vertical p-4 sm:p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center py-20">加载中...</div>
+          <div className="text-center py-20 text-amber-600">加载中...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">📋 四象限法则</h1>
-          <p className="text-gray-600">重要-紧急时间管理工具</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="p-2.5 bg-orange-500 rounded-xl">
+              <LayoutGrid className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <span className="brand-text-gradient">21Days</span>
+              <span className="text-gray-400 text-base font-normal ml-2">四象限法则</span>
+            </div>
+          </h1>
+          <p className="text-amber-600/60 mt-1 text-sm">重要-紧急时间管理工具</p>
         </div>
 
         {/* Stats */}
@@ -117,7 +129,7 @@ export const Quadrants: React.FC = () => {
             return (
               <div key={q.id} className={cn('rounded-xl p-3 sm:p-4', q.bgColor, q.borderColor, 'border')}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-lg sm:text-xl">{q.icon}</span>
+                  {React.createElement(Q_ICONS[q.icon], { className: 'w-5 h-5 sm:w-6 sm:h-6', ...(q.id === 'urgent-important' ? { color: '#dc2626' } : q.id === 'urgent-not-important' ? { color: '#d97706' } : q.id === 'not-urgent-important' ? { color: '#2563eb' } : { color: '#6b7280' }) })}
                   <span className={cn('text-xs sm:text-sm font-bold', q.textColor)}>
                     {completedCount}/{quadrantTasks.length}
                   </span>
@@ -141,7 +153,7 @@ export const Quadrants: React.FC = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-xl sm:text-2xl">{quadrant.icon}</span>
+                      {React.createElement(Q_ICONS[quadrant.icon], { className: 'w-5 h-5 sm:w-6 sm:h-6', ...(quadrant.id === 'urgent-important' ? { color: '#dc2626' } : quadrant.id === 'urgent-not-important' ? { color: '#d97706' } : quadrant.id === 'not-urgent-important' ? { color: '#2563eb' } : { color: '#6b7280' }) })}
                       <h2 className="text-lg sm:text-xl font-bold text-gray-900">{quadrant.title}</h2>
                     </div>
                     <p className="text-xs sm:text-sm text-gray-600 mt-1">{quadrant.description}</p>
@@ -313,7 +325,7 @@ const AddTaskDialog: React.FC<{
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="输入任务标题"
               autoFocus
             />
@@ -323,7 +335,7 @@ const AddTaskDialog: React.FC<{
             <select
               value={relatedTaskId}
               onChange={(e) => setRelatedTaskId(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="">不关联打卡事项</option>
               {enabledTasks.map((task) => (
@@ -336,7 +348,7 @@ const AddTaskDialog: React.FC<{
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
               rows={2}
               placeholder="添加任务描述（可选）"
             />
@@ -347,7 +359,7 @@ const AddTaskDialog: React.FC<{
               <select
                 value={urgency}
                 onChange={(e) => setUrgency(e.target.value as 'high' | 'low')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="high">紧急</option>
                 <option value="low">不紧急</option>
@@ -358,7 +370,7 @@ const AddTaskDialog: React.FC<{
               <select
                 value={importance}
                 onChange={(e) => setImportance(e.target.value as 'high' | 'low')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="high">重要</option>
                 <option value="low">不重要</option>
@@ -371,7 +383,7 @@ const AddTaskDialog: React.FC<{
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
           <div className="flex space-x-3 pt-4">
@@ -384,7 +396,7 @@ const AddTaskDialog: React.FC<{
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="flex-1 px-4 py-2 brand-gradient text-white rounded-lg hover:opacity-90 transition-opacity"
             >
               添加
             </button>
@@ -434,7 +446,7 @@ const EditTaskDialog: React.FC<{
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               autoFocus
             />
           </div>
@@ -443,7 +455,7 @@ const EditTaskDialog: React.FC<{
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
               rows={2}
             />
           </div>
@@ -453,7 +465,7 @@ const EditTaskDialog: React.FC<{
               <select
                 value={urgency}
                 onChange={(e) => setUrgency(e.target.value as 'high' | 'low')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="high">紧急</option>
                 <option value="low">不紧急</option>
@@ -464,7 +476,7 @@ const EditTaskDialog: React.FC<{
               <select
                 value={importance}
                 onChange={(e) => setImportance(e.target.value as 'high' | 'low')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="high">重要</option>
                 <option value="low">不重要</option>
@@ -477,7 +489,7 @@ const EditTaskDialog: React.FC<{
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as 'pending' | 'in_progress' | 'completed')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="pending">待办</option>
                 <option value="in_progress">进行中</option>
@@ -490,7 +502,7 @@ const EditTaskDialog: React.FC<{
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
           </div>
@@ -504,7 +516,7 @@ const EditTaskDialog: React.FC<{
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="flex-1 px-4 py-2 brand-gradient text-white rounded-lg hover:opacity-90 transition-opacity"
             >
               保存
             </button>

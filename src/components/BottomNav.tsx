@@ -12,7 +12,7 @@ const navItems = [
 
 export const BottomNav: React.FC = () => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 shadow-lg">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-100 z-40 shadow-[0_-2px_12px_rgba(0,0,0,0.06)]">
       <div className="max-w-6xl mx-auto px-2">
         <div className="flex justify-around">
           {navItems.map(({ to, icon: Icon, label }) => (
@@ -21,18 +21,29 @@ export const BottomNav: React.FC = () => {
               to={to}
               className={({ isActive }) =>
                 cn(
-                  'flex flex-col items-center py-3 px-3 sm:px-4 text-xs sm:text-sm transition-colors duration-150',
+                  'flex flex-col items-center py-2.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-200 relative',
                   isActive ? 'text-orange-500' : 'text-gray-400 hover:text-gray-600'
                 )
               }
             >
               {({ isActive }) => (
                 <>
-                  <Icon className={cn(
-                    'w-5 h-5 sm:w-6 sm:h-6 transition-all duration-150',
-                    isActive ? 'text-orange-500' : 'text-gray-400'
-                  )} />
-                  <span className="font-medium mt-0.5">{label}</span>
+                  {isActive && (
+                    <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full brand-gradient" />
+                  )}
+                  <div className={cn(
+                    'rounded-xl p-1.5 transition-all duration-200',
+                    isActive ? 'bg-orange-50 brand-glow' : ''
+                  )}>
+                    <Icon className={cn(
+                      'w-5 h-5 sm:w-6 sm:h-6 transition-all duration-200',
+                      isActive ? 'text-orange-500' : 'text-gray-400'
+                    )} />
+                  </div>
+                  <span className={cn(
+                    'font-medium mt-0.5 transition-all duration-200',
+                    isActive ? 'text-orange-600' : ''
+                  )}>{label}</span>
                 </>
               )}
             </NavLink>
@@ -42,18 +53,29 @@ export const BottomNav: React.FC = () => {
             to="/settings"
             className={({ isActive }) =>
               cn(
-                'flex flex-col items-center py-3 px-3 sm:px-4 text-xs sm:text-sm transition-colors duration-150',
+                'flex flex-col items-center py-2.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-200 relative',
                 isActive ? 'text-orange-500' : 'text-gray-400 hover:text-gray-600'
               )
             }
           >
             {({ isActive }) => (
               <>
-                <Settings className={cn(
-                  'w-5 h-5 sm:w-6 sm:h-6 transition-all duration-150',
-                  isActive ? 'text-orange-500' : 'text-gray-400'
-                )} />
-                <span className="font-medium mt-0.5">设置</span>
+                {isActive && (
+                  <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full brand-gradient" />
+                )}
+                <div className={cn(
+                  'rounded-xl p-1.5 transition-all duration-200',
+                  isActive ? 'bg-orange-50 brand-glow' : ''
+                )}>
+                  <Settings className={cn(
+                    'w-5 h-5 sm:w-6 sm:h-6 transition-all duration-200',
+                    isActive ? 'text-orange-500' : 'text-gray-400'
+                  )} />
+                </div>
+                <span className={cn(
+                  'font-medium mt-0.5 transition-all duration-200',
+                  isActive ? 'text-orange-600' : ''
+                )}>设置</span>
               </>
             )}
           </NavLink>

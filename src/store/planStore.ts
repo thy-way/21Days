@@ -57,7 +57,7 @@ export const usePlanStore = create<PlanState>((set, get) => ({
   createCustomPlan: () => {
     return {
       title: '',
-      categoryId: 'coding' as CategoryId,
+      categoryId: '',
       type: 'custom' as const,
       description: '',
       isActive: true,

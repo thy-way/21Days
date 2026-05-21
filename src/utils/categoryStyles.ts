@@ -47,6 +47,14 @@ export const CATEGORY_STYLES: Record<
   },
 };
 
-export function getCategoryStyles(categoryId: CategoryId) {
-  return CATEGORY_STYLES[categoryId] || CATEGORY_STYLES.fitness;
+const DEFAULT_STYLE = {
+  bg: 'bg-orange-500',
+  bgLight: 'bg-orange-50',
+  text: 'text-orange-600',
+  border: 'border-orange-200',
+  gradient: 'bg-orange-500',
+};
+
+export function getCategoryStyles(categoryId: string) {
+  return CATEGORY_STYLES[categoryId as CategoryId] || DEFAULT_STYLE;
 }

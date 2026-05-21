@@ -38,18 +38,25 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen brand-gradient-vertical flex flex-col">
       <div className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-sm animate-slide-up">
           {/* Logo */}
           <div className="text-center mb-10">
             <div className="relative inline-flex items-center justify-center mb-4">
-              <span className="text-6xl font-extrabold tracking-tight text-orange-500 -skew-x-2">
-                21
-              </span>
-              <span className="absolute -bottom-3 -right-2 text-sm font-bold text-orange-400 tracking-widest">Days</span>
+              <div className="relative">
+                <span className="text-6xl font-extrabold tracking-tight brand-text-gradient -skew-x-2">
+                  21
+                </span>
+                <span className="absolute -bottom-3 -right-2 text-sm font-bold text-amber-500 tracking-widest">Days</span>
+              </div>
             </div>
-            <p className="text-gray-400 text-sm mt-1">21 天习惯养成计划</p>
+            <p className="text-amber-600/70 text-sm mt-1 font-medium">21 天习惯养成计划</p>
+            <div className="flex items-center justify-center gap-2 mt-3">
+              <span className="w-6 h-px bg-orange-200" />
+              <span className="text-xs font-medium text-orange-400 tracking-[0.2em]">坚持向上的生命力</span>
+              <span className="w-6 h-px bg-orange-200" />
+            </div>
           </div>
 
           {/* Form */}
@@ -156,17 +163,19 @@ export const Login: React.FC = () => {
 
           {/* Day indicator */}
           <div className="text-center mt-10">
-            <span className="inline-flex items-center gap-2 text-sm text-gray-300 font-medium tracking-widest">
-              <span className="w-4 h-px bg-gray-200" />
-              DAY {Math.min(loginDates.length + 1, 21)} / 21
-              <span className="w-4 h-px bg-gray-200" />
+            <span className="inline-flex items-center gap-2 text-sm text-orange-300 font-medium tracking-widest">
+              <span className="w-8 h-px brand-gradient rounded-full" />
+              <span className="bg-orange-50 text-orange-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse-soft">
+                DAY {Math.min(loginDates.length + 1, 21)} / 21
+              </span>
+              <span className="w-8 h-px brand-gradient rounded-full" />
             </span>
           </div>
         </div>
       </div>
 
       {/* Bottom accent line */}
-      <div className="h-1 w-full bg-gradient-to-r from-orange-400 via-orange-500 to-rose-500" />
+      <div className="h-1 w-full brand-gradient" />
     </div>
   );
 };

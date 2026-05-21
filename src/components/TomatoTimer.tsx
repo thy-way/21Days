@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Play, Pause, Check } from 'lucide-react';
+import { X, Play, Pause, Check, Clock } from 'lucide-react';
 import { cn } from '@/utils';
 
 interface TomatoTimerProps {
@@ -78,7 +78,7 @@ export const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, o
           <button onClick={onClose} className="absolute top-4 right-4 p-1 text-white/80 hover:text-white">
             <X className="w-5 h-5" />
           </button>
-          <div className="text-3xl mb-1">🍅</div>
+          <Clock className="w-8 h-8 mx-auto mb-1" />
           <h3 className="text-lg font-bold">番茄专注</h3>
         </div>
 

@@ -13,9 +13,10 @@ import {
   X,
   Sparkles,
   ChevronLeft,
+  Check,
 } from "lucide-react";
 import { cn } from "@/utils";
-import { CATEGORY_STYLES } from "@/utils/categoryStyles";
+import { CATEGORY_STYLES, getCategoryStyles } from "@/utils/categoryStyles";
 import { CATEGORY_QUESTIONS } from "@/data/aiTemplates";
 import {
   UserPlan,
@@ -142,8 +143,8 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                 <ChevronLeft className="w-5 h-5" />
               </button>
             )}
-            <div className="p-2 bg-purple-50 rounded-lg">
-              <Brain className="w-5 h-5 text-purple-600" />
+            <div className="p-2 bg-orange-50 rounded-lg">
+              <Brain className="w-5 h-5 text-orange-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">
               {step === 1 && "选择分类"}
@@ -170,11 +171,11 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                   s === step
                     ? "bg-orange-500 text-white"
                     : s < step
-                    ? "bg-green-100 text-green-600"
+                    ? "bg-gray-100 text-gray-600"
                     : "bg-gray-100 text-gray-400"
                 )}
               >
-                {s < step ? "✓" : s}
+                {s < step ? <Check className="w-4 h-4" /> : s}
               </div>
             ))}
           </div>
@@ -299,7 +300,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                       <div
                         className={cn(
                           "w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white",
-                          style?.bg || "bg-blue-500"
+                          style?.bg || "bg-orange-500"
                         )}
                       >
                         {idx + 1}
@@ -402,7 +403,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                   !currentCategory ||
                   currentCategory.questions.some((q) => !answers[q.key])
                 }
-                className="px-5 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-5 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {generating ? (
                   <>
@@ -448,7 +449,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
   const isEdit = !!editPlan;
 
   const [title, setTitle] = useState("");
-  const [categoryId, setCategoryId] = useState<CategoryId>("coding");
+  const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
   const [tasks, setTasks] = useState<UserPlanTask[]>([]);
 
@@ -594,7 +595,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="输入计划标题"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
@@ -603,17 +604,13 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               分类
             </label>
-            <select
+            <input
+              type="text"
               value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value as CategoryId)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {(Object.keys(CATEGORY_NAMES) as CategoryId[]).map((cat) => (
-                <option key={cat} value={cat}>
-                  {CATEGORY_NAMES[cat]}
-                </option>
-              ))}
-            </select>
+              onChange={(e) => setCategoryId(e.target.value)}
+              placeholder="输入分类名称（如：学习、健身、工作）"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
           </div>
 
           {/* Description */}
@@ -626,7 +623,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="计划描述..."
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
@@ -672,7 +669,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                         updateTaskField(idx, "name", e.target.value)
                       }
                       placeholder="输入任务名称"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                   <div>
@@ -690,7 +687,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                       }
                       placeholder="每行一个学习步骤"
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                   <div>
@@ -706,7 +703,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                           e.target.value as QuadrantType
                         )
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                       <option value="">未分配</option>
                       {(Object.keys(QUADRANT_LABELS) as QuadrantType[]).map(
@@ -739,7 +736,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                             updateResource(idx, ri, "name", e.target.value)
                           }
                           placeholder="资源名称"
-                          className="flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
                         />
                         <input
                           type="text"
@@ -748,7 +745,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                             updateResource(idx, ri, "url", e.target.value)
                           }
                           placeholder="链接（可选）"
-                          className="flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
                         />
                         <button
                           onClick={() => removeResource(idx, ri)}
@@ -799,7 +796,10 @@ interface PlanCardProps {
 
 const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
   const [expanded, setExpanded] = useState(false);
-  const style = CATEGORY_STYLES[plan.categoryId];
+  const style = getCategoryStyles(plan.categoryId);
+  const getCategoryName = (catId: string) => {
+    return CATEGORY_NAMES[catId as CategoryId] || catId;
+  };
 
   const uniqueTasks = React.useMemo(
     () => plan.tasks.filter((t, i, arr) => arr.findIndex((x) => x.name === t.name) === i),
@@ -820,7 +820,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
                 style.bg
               )}
             >
-              {CATEGORY_NAMES[plan.categoryId].charAt(0)}
+              {getCategoryName(plan.categoryId).charAt(0)}
             </div>
             <div className="min-w-0 flex-1">
               <h3 className="font-semibold text-gray-900 text-base truncate">
@@ -834,7 +834,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
                     style.text
                   )}
                 >
-                  {CATEGORY_NAMES[plan.categoryId]}
+                  {getCategoryName(plan.categoryId)}
                 </span>
                 <span
                   className={cn(
@@ -976,7 +976,7 @@ export const Plan: React.FC = () => {
 
   const getCategoryColor = (categoryId: string) => {
     const style = CATEGORY_STYLES[categoryId as CategoryId];
-    return style?.gradient || "bg-blue-500";
+    return style?.gradient || "brand-gradient";
   };
 
   const getCategoryName = (categoryId: string) => {
@@ -990,32 +990,35 @@ export const Plan: React.FC = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="p-2.5 bg-emerald-500 rounded-xl">
+              <div className="p-2.5 bg-orange-500 rounded-xl">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
-              {"学习计划"}
+              <div>
+                <span className="brand-text-gradient">21Days</span>
+                <span className="text-gray-400 text-base font-normal ml-2">学习计划</span>
+              </div>
             </h1>
-            <p className="text-gray-500 mt-1">
-              {"管理你的学习计划和路线"}
+            <p className="text-amber-600/60 mt-1 text-sm">
+              管理你的学习计划和路线
             </p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setAiDialogOpen(true)}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 flex items-center gap-2"
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 flex items-center gap-2"
             >
               <Brain className="w-4 h-4" />
-              <span className="hidden sm:inline">AI {"生成"}</span>
+              <span className="hidden sm:inline">AI 生成</span>
             </button>
             <button
               onClick={() => {
                 setEditPlan(null);
                 setCustomDialogOpen(true);
               }}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center gap-2"
+              className="px-4 py-2 border border-orange-200 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-50 flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">{"自定义"}</span>
+              <span className="hidden sm:inline">自定义</span>
             </button>
           </div>
         </div>
@@ -1043,8 +1046,8 @@ export const Plan: React.FC = () => {
           <div className="mb-8">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-orange-500" />
-              {"我的计划"}
-              <span className="text-sm font-normal text-gray-400 ml-1">
+              我的计划
+              <span className="text-sm font-normal text-amber-500 ml-1">
                 ({plans.length})
               </span>
             </h2>
@@ -1104,7 +1107,7 @@ export const Plan: React.FC = () => {
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => setAiDialogOpen(true)}
-                className="px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 flex items-center gap-2"
+                className="px-5 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
                 AI {"生成"}

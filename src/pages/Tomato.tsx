@@ -105,13 +105,21 @@ export const Tomato: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">🍅 番茄工作法</h1>
-            <p className="text-gray-600">专注时间，提高效率</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="p-2.5 bg-orange-500 rounded-xl">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="brand-text-gradient">21Days</span>
+                <span className="text-gray-400 text-base font-normal ml-2">番茄工作法</span>
+              </div>
+            </h1>
+            <p className="text-amber-600/60 mt-1 text-sm">专注时间，提高效率</p>
           </div>
           <button
             onClick={() => setShowSettings(!showSettings)}
@@ -123,17 +131,17 @@ export const Tomato: React.FC = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-orange-50 rounded-xl p-4 border border-orange-200">
             <div className="flex items-center space-x-2">
               <Flame className="w-5 h-5 text-orange-500" />
-              <span className="text-sm text-gray-600">今日完成</span>
+              <span className="text-sm text-amber-700">今日完成</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{completedCount}</p>
+            <p className="text-2xl font-bold text-orange-600 mt-1">{completedCount}</p>
           </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
             <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-blue-500" />
-              <span className="text-sm text-gray-600">总时长</span>
+              <Clock className="w-5 h-5 text-amber-500" />
+              <span className="text-sm text-amber-700">总时长</span>
             </div>
             <p className="text-2xl font-bold text-gray-900 mt-1">
               {sessions.filter(s => s.completed).reduce((sum, s) => sum + (s.actualDuration || s.duration), 0)}
@@ -143,7 +151,7 @@ export const Tomato: React.FC = () => {
         </div>
 
         {/* Timer */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-6">
+        <div className="card-warm p-6 sm:p-8 mb-6">
           <div className="flex flex-col items-center">
             {/* Timer Type Selection */}
             <div className="flex space-x-2 mb-6">
@@ -157,7 +165,7 @@ export const Tomato: React.FC = () => {
                 className={cn(
                   'px-4 py-2 rounded-lg text-sm font-medium transition-all',
                   !currentSession && localCurrentType === 'focus'
-                    ? 'bg-blue-500 text-white'
+                    ? 'brand-gradient text-white shadow-warm'
                     : !currentSession
                     ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -175,7 +183,7 @@ export const Tomato: React.FC = () => {
                 className={cn(
                   'px-4 py-2 rounded-lg text-sm font-medium transition-all',
                   !currentSession && localCurrentType === 'short-break'
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-amber-500 text-white shadow-warm'
                     : !currentSession
                     ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -193,7 +201,7 @@ export const Tomato: React.FC = () => {
                 className={cn(
                   'px-4 py-2 rounded-lg text-sm font-medium transition-all',
                   !currentSession && localCurrentType === 'long-break'
-                    ? 'bg-purple-500 text-white'
+                    ? 'bg-orange-500 text-white shadow-warm'
                     : !currentSession
                     ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -261,7 +269,7 @@ export const Tomato: React.FC = () => {
             {!currentSession ? (
               <button
                 onClick={handleStart}
-                className="flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg"
+                className="flex items-center space-x-2 px-8 py-4 brand-gradient text-white rounded-full text-lg font-semibold hover:opacity-90 transition-opacity shadow-warm-lg"
               >
                 <Play className="w-6 h-6" />
                 <span>开始</span>
@@ -269,21 +277,21 @@ export const Tomato: React.FC = () => {
             ) : (
               <div className="flex space-x-3">
                 {!isRunning ? (
-                  <button
-                    onClick={handleResume}
-                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-lg"
-                  >
-                    <Play className="w-5 h-5" />
-                    <span>继续</span>
-                  </button>
+                    <button
+                      onClick={handleResume}
+                      className="flex items-center space-x-2 px-6 py-3 brand-gradient text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-warm-md"
+                    >
+                      <Play className="w-5 h-5" />
+                      <span>继续</span>
+                    </button>
                 ) : (
-                  <button
-                    onClick={handlePause}
-                    className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-lg"
-                  >
-                    <Pause className="w-5 h-5" />
-                    <span>暂停</span>
-                  </button>
+                    <button
+                      onClick={handlePause}
+                      className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-400 to-orange-600 text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-warm-md"
+                    >
+                      <Pause className="w-5 h-5" />
+                      <span>暂停</span>
+                    </button>
                 )}
                 <button
                   onClick={handleCancel}
@@ -294,7 +302,7 @@ export const Tomato: React.FC = () => {
                 </button>
                 <button
                   onClick={handleComplete}
-                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-lg"
+                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-full font-semibold hover:opacity-90 transition-opacity shadow-warm-md"
                 >
                   <Check className="w-5 h-5" />
                   <span>完成</span>
@@ -310,7 +318,7 @@ export const Tomato: React.FC = () => {
               <select
                 value={selectedTaskId}
                 onChange={(e) => setSelectedTaskId(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="">不关联任务</option>
                 {tasks.filter(t => t.enabled).map((task) => (
@@ -329,7 +337,7 @@ export const Tomato: React.FC = () => {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="添加备注..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
           )}
@@ -337,8 +345,11 @@ export const Tomato: React.FC = () => {
 
         {/* Settings Panel */}
         {showSettings && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">⚙️ 设置</h3>
+          <div className="card-warm p-6 mb-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Settings className="w-5 h-5 text-orange-500" />
+              设置
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">专注时长（分钟）</label>
@@ -348,7 +359,7 @@ export const Tomato: React.FC = () => {
                   max="60"
                   value={settings.focusDuration}
                   onChange={(e) => saveSettings({ focusDuration: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               <div>
@@ -359,7 +370,7 @@ export const Tomato: React.FC = () => {
                   max="30"
                   value={settings.shortBreakDuration}
                   onChange={(e) => saveSettings({ shortBreakDuration: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               <div>
@@ -370,7 +381,7 @@ export const Tomato: React.FC = () => {
                   max="60"
                   value={settings.longBreakDuration}
                   onChange={(e) => saveSettings({ longBreakDuration: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               <div>
@@ -381,7 +392,7 @@ export const Tomato: React.FC = () => {
                   max="10"
                   value={settings.longBreakInterval}
                   onChange={(e) => saveSettings({ longBreakInterval: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 />
               </div>
               <div className="flex items-center space-x-2 sm:col-span-2">
@@ -390,7 +401,7 @@ export const Tomato: React.FC = () => {
                   id="autoStartBreaks"
                   checked={settings.autoStartBreaks}
                   onChange={(e) => saveSettings({ autoStartBreaks: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-4 h-4 text-orange-500 rounded focus:ring-2 focus:ring-orange-500"
                 />
                 <label htmlFor="autoStartBreaks" className="text-sm text-gray-700">自动开始休息</label>
               </div>
@@ -400,7 +411,7 @@ export const Tomato: React.FC = () => {
                   id="soundEnabled"
                   checked={settings.soundEnabled}
                   onChange={(e) => saveSettings({ soundEnabled: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-4 h-4 text-orange-500 rounded focus:ring-2 focus:ring-orange-500"
                 />
                 <label htmlFor="soundEnabled" className="text-sm text-gray-700">提示音效</label>
               </div>
@@ -409,9 +420,9 @@ export const Tomato: React.FC = () => {
         )}
 
         {/* History */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-blue-500" />
+        <div className="card-warm p-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-orange-500" />
             今日记录
           </h3>
           {sessions.filter(s => new Date(s.startDate).toISOString().split('T')[0] === new Date().toISOString().split('T')[0]).length === 0 ? (

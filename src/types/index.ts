@@ -161,7 +161,7 @@ export interface UserPlanTask {
 export interface UserPlan {
   id?: number;
   title: string;
-  categoryId: CategoryId;
+  categoryId: string;
   type: 'ai-generated' | 'custom';
   description: string;
   isActive: boolean;

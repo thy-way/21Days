@@ -51,7 +51,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           </h2>
           <button
             onClick={goToToday}
-            className="px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+            className="px-2 py-1 text-xs bg-orange-100 text-orange-600 rounded-lg hover:bg-orange-200"
           >
             今天
           </button>
@@ -94,8 +94,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
               className={cn(
                 'aspect-square flex flex-col items-center justify-center rounded-lg text-sm transition-all relative',
                 isCurrentMonth ? 'hover:bg-gray-100' : 'text-gray-300',
-                isSelected && 'bg-blue-100 ring-2 ring-blue-500',
-                isToday && !isSelected && 'bg-blue-50',
+                isSelected && 'bg-orange-100 ring-2 ring-orange-500',
+                isToday && !isSelected && 'bg-orange-50',
                 isToday && 'font-semibold'
               )}
             >

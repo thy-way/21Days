@@ -5,6 +5,7 @@ import { useCheckInStore } from '@/store';
 import { CalendarGrid } from '@/components/CalendarGrid';
 import { DailyStats } from '@/types';
 import { cn } from '@/utils';
+import { Calendar as CalendarIcon, Check } from 'lucide-react';
 
 export const Calendar: React.FC = () => {
   const { getDailyStats, categories } = useCheckInStore();
@@ -37,14 +38,22 @@ export const Calendar: React.FC = () => {
   }, [selectedDate, statsMap]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">📅 日历</h1>
-          <p className="text-gray-600 mt-1">查看打卡历史记录</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div className="p-2.5 bg-orange-500 rounded-xl">
+              <CalendarIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <span className="brand-text-gradient">21Days</span>
+              <span className="text-gray-400 text-base font-normal ml-2">日历</span>
+            </div>
+          </h1>
+          <p className="text-amber-600/60 mt-1 text-sm">查看打卡历史记录</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-6">
+        <div className="card-warm p-4 sm:p-6 mb-6">
           <CalendarGrid
             statsMap={statsMap}
             onDateSelect={setSelectedDate}
@@ -53,12 +62,12 @@ export const Calendar: React.FC = () => {
         </div>
 
         {selectedStats && selectedDate && (
-          <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6">
+          <div className="card-warm p-5 sm:p-6">
             <div className="flex items-center justify-between mb-5">
               <h3 className="font-bold text-gray-900 text-lg">
                 {format(parseISO(selectedDate), 'M月d日 EEEE', { locale: zhCN })}
               </h3>
-              <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+              <div className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-sm font-medium">
                 {selectedStats.totalCheckIns} 次打卡
               </div>
             </div>
@@ -79,7 +88,7 @@ export const Calendar: React.FC = () => {
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm text-gray-600">{cat.name}</span>
-                      {isCompleted && <span className="text-green-500 text-xs">✓</span>}
+                      {isCompleted && <Check className="w-3.5 h-3.5 text-green-500" />}
                     </div>
                     <div className="flex items-baseline space-x-1">
                       <span className="text-2xl font-bold text-gray-900">{count}</span>

@@ -4,11 +4,14 @@ import { zhCN } from 'date-fns/locale';
 import {
   Flame,
   Zap,
-  Star,
   Check,
   Target,
   X,
   Clock,
+  TrendingUp,
+  AlertTriangle,
+  Minus,
+  Camera,
 } from 'lucide-react';
 import { useCheckInStore, usePlanStore } from '@/store';
 import { QuadrantType } from '@/types';
@@ -125,7 +128,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
             <div className="mb-4">
               <button type="button" onClick={() => setShowPhotoInput(!showPhotoInput)}
                 className="flex items-center text-sm text-gray-500 hover:text-gray-700">
-                <span className="mr-2">📷</span>
+                <Camera className="w-4 h-4 mr-1.5" />
                 {photo ? '更换照片' : '添加照片（可选）'}
               </button>
               {showPhotoInput && (
@@ -140,7 +143,7 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
                     </div>
                   ) : (
                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors">
-                      <span className="text-3xl mb-2">📷</span>
+                      <Camera className="w-8 h-8 mb-2 text-orange-400" />
                       <span className="text-sm text-gray-500">点击上传照片</span>
                       <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
                     </label>
@@ -162,6 +165,10 @@ const TaskCheckInDialog: React.FC<TaskCheckInDialogProps> = ({
 
 // ===================== QuadrantCell =====================
 
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
+  AlertTriangle, Zap, Target, Minus,
+};
+
 interface QuadrantCellProps {
   quadrantId: QuadrantType;
   icon: string;
@@ -177,12 +184,13 @@ const QuadrantCell: React.FC<QuadrantCellProps> = ({
   const [expanded, setExpanded] = useState(false);
   const taskContent = renderTasks(quadrantId);
   const taskCount = React.Children.count(taskContent);
+  const IconComponent = ICON_MAP[icon];
 
   return (
-    <div className="bg-white rounded-xl shadow-card border border-gray-100 flex flex-col min-h-0">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-0">
       {/* 标题栏 */}
       <div className={cn('flex items-center gap-2 px-3 py-2 rounded-t-xl', headerBg)}>
-        <span className="text-base">{icon}</span>
+        {IconComponent && <IconComponent className="w-4 h-4" />}
         <div className="min-w-0 flex-1">
           <div className="font-semibold text-sm text-gray-800">{title}</div>
           <div className="text-xs text-gray-500">{desc}</div>
@@ -239,16 +247,16 @@ export const Home: React.FC = () => {
     if (fromPlans.length === 0) return null;
     return fromPlans.map((pt: any) => (
       <div key={`plan-${pt.planId}-${pt.id}`}
-        className="flex items-center justify-between bg-amber-50 rounded-lg px-2.5 py-1.5 text-xs border border-amber-200 mb-1">
+        className="flex items-center justify-between bg-orange-50 rounded-lg px-2.5 py-1.5 text-xs border border-orange-200 mb-1">
         <span className="truncate text-gray-700 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />
           {pt.name}
         </span>
         <div className="flex items-center gap-1 flex-shrink-0">
           <button onClick={() => setTomatoTask({ name: pt.name, planId: pt.planId, planCategoryId: pt.planCategoryId })}
-            className="px-1 py-0.5 text-orange-500 hover:bg-orange-100 rounded text-xs">🍅</button>
+            className="px-1.5 py-0.5 text-orange-500 hover:bg-orange-100 rounded text-xs font-medium">专注</button>
           <button onClick={() => handlePlanTaskCheckIn(pt.planId, pt.planCategoryId, pt.name)}
-            className="px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded text-xs hover:bg-amber-200">打卡</button>
+            className="px-1.5 py-0.5 bg-orange-500 text-white rounded text-xs hover:bg-orange-600">打卡</button>
         </div>
       </div>
     ));
@@ -267,39 +275,55 @@ export const Home: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-orange-500 rounded-xl">
-              <Zap className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="p-2.5 bg-orange-500 rounded-xl">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="brand-text-gradient">21Days</span>
+                <span className="text-sm text-gray-400 font-normal ml-2">今日打卡</span>
+              </div>
+            </h1>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 px-2.5 py-1 bg-gray-50 rounded-full border border-gray-200">
+                <Flame className="w-3.5 h-3.5 text-orange-500" />
+                <span className="font-semibold text-orange-600 text-sm">{streak}</span>
+                <span className="text-gray-400 text-xs">天</span>
+              </div>
+              <div className="px-2 py-1 bg-gray-50 rounded-full border border-gray-200 text-xs font-medium text-gray-500">
+                DAY {streak > 21 ? 21 : streak}/21
+              </div>
             </div>
-            21Days<span className="text-sm text-gray-400 font-normal ml-1">今日打卡</span>
-            <div className="flex items-center gap-1.5 text-base ml-auto text-orange-500">
-              <Flame className="w-5 h-5" />
-              <span className="font-bold">{streak}</span>
-              <span className="text-gray-400 font-normal">天</span>
-            </div>
-          </h1>
-          <p className="text-gray-500 mt-1 flex items-center gap-1.5">
+          </div>
+          <p className="text-amber-600/60 mt-2 flex items-center gap-1.5 text-sm">
             <Clock className="w-4 h-4" />
             {format(today, 'yyyy年M月d日 EEEE', { locale: zhCN })}
           </p>
         </div>
 
         {/* Progress Card */}
-        <div className="bg-white rounded-xl shadow-card p-5 mb-6">
+        <div className="card-warm p-5 mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-orange-400" />
-              <span className="font-medium text-gray-800">今日进度</span>
+              <TrendingUp className="w-5 h-5 text-orange-500" />
+              <span className="font-semibold text-gray-800">今日进度</span>
             </div>
-            <span className="font-bold text-gray-800">{completedTasks}/{totalTasks} 项</span>
+            <span className="font-bold text-orange-600">{completedTasks}/{totalTasks} 项</span>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 transition-all duration-700"
+          <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div className="h-full rounded-full brand-gradient transition-all duration-700 shadow-sm"
               style={{ width: `${totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0}%` }} />
           </div>
-          <div className="flex justify-between mt-2 text-sm text-gray-500">
-            <span>已完成 {Math.round(totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0)}%</span>
-            <span>{completedTasks === totalTasks && totalTasks > 0 ? '🎉 全部完成！' : '加油！'}</span>
+          <div className="flex justify-between mt-2 text-sm">
+            <span className="text-gray-500">已完成 {Math.round(totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0)}%</span>
+            <span className="text-gray-600 font-medium">
+              {completedTasks === totalTasks && totalTasks > 0 ? (
+                <span className="flex items-center gap-1">
+                  <Check className="w-4 h-4" /> 全部完成！
+                </span>
+              ) : '保持节奏，坚持下去 💪'}
+            </span>
           </div>
         </div>
 
@@ -308,16 +332,17 @@ export const Home: React.FC = () => {
           <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
             <Target className="w-5 h-5 mr-2 text-orange-500" />
             四象限法则
+            <span className="ml-auto text-xs font-normal text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full">优先管理</span>
           </h2>
 
           <div className="grid grid-cols-2 gap-3">
-            <QuadrantCell quadrantId="urgent-important" icon="🔥" title="重要紧急" desc="立即处理" headerBg="bg-red-50"
+            <QuadrantCell quadrantId="urgent-important" icon="AlertTriangle" title="重要紧急" desc="立即处理" headerBg="bg-red-50"
               renderTasks={renderQuadrantTasks} />
-            <QuadrantCell quadrantId="urgent-not-important" icon="⚡" title="紧急不重要" desc="尽快处理" headerBg="bg-amber-50"
+            <QuadrantCell quadrantId="urgent-not-important" icon="Zap" title="紧急不重要" desc="尽快处理" headerBg="bg-orange-50"
               renderTasks={renderQuadrantTasks} />
-            <QuadrantCell quadrantId="not-urgent-important" icon="🎯" title="重要不紧急" desc="规划安排" headerBg="bg-blue-50"
+            <QuadrantCell quadrantId="not-urgent-important" icon="Target" title="重要不紧急" desc="规划安排" headerBg="bg-amber-50"
               renderTasks={renderQuadrantTasks} />
-            <QuadrantCell quadrantId="not-urgent-not-important" icon="🗑️" title="不重要不紧急" desc="减少或删除" headerBg="bg-gray-50"
+            <QuadrantCell quadrantId="not-urgent-not-important" icon="Minus" title="不重要不紧急" desc="减少或删除" headerBg="bg-gray-50"
               renderTasks={renderQuadrantTasks} />
           </div>
         </div>

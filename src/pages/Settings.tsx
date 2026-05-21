@@ -4,7 +4,7 @@ import { Dialog } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
 import { CATEGORY_STYLES } from '@/utils/categoryStyles';
 import { cn } from '@/utils';
-import { Download, Upload, Trash2, AlertTriangle, Flame, LogOut, Camera, Edit2, Settings as SettingsIcon } from 'lucide-react';
+import { Download, Upload, Trash2, AlertTriangle, Flame, LogOut, Camera, Edit2, Settings as SettingsIcon, LayoutGrid, Bell, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Settings: React.FC = () => {
@@ -111,20 +111,23 @@ export const Settings: React.FC = () => {
   const isCustomAvatar = profile.avatar && !DEFAULT_AVATARS.includes(profile.avatar);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 pb-24">
+    <div className="min-h-screen pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-gray-600 rounded-xl">
+            <div className="p-2.5 bg-orange-500 rounded-xl">
               <SettingsIcon className="w-6 h-6 text-white" />
             </div>
-            设置
+            <div>
+              <span className="brand-text-gradient">21Days</span>
+              <span className="text-gray-400 text-base font-normal ml-2">设置</span>
+            </div>
           </h1>
-          <p className="text-gray-600 mt-1">自定义你的打卡体验</p>
+          <p className="text-amber-600/60 mt-1 text-sm">自定义你的打卡体验</p>
         </div>
 
         {/* Profile Section */}
-        <div className="bg-white rounded-xl shadow-card p-5 sm:p-6 mb-6">
+        <div className="card-warm p-5 sm:p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {/* Avatar */}
@@ -159,7 +162,7 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* Streak */}
-        <div className="bg-white rounded-xl shadow-card p-5 sm:p-6 mb-6">
+        <div className="card-warm p-5 sm:p-6 mb-6">
           <div className="flex items-center justify-center py-4">
             <div className="text-center">
               <div className="flex items-center justify-center space-x-2 text-orange-500 mb-2">
@@ -171,8 +174,11 @@ export const Settings: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-card p-5 sm:p-6 mb-6">
-          <h2 className="font-semibold text-gray-900 mb-4">📂 分类管理</h2>
+        <div className="card-warm p-5 sm:p-6 mb-6">
+          <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <LayoutGrid className="w-5 h-5 text-orange-500" />
+            分类管理
+          </h2>
           <div className="space-y-3">
             {categories.map((cat) => {
               const styles = CATEGORY_STYLES[cat.id];
@@ -186,7 +192,7 @@ export const Settings: React.FC = () => {
                     <select
                       value={cat.dailyGoal || 1}
                       onChange={(e) => updateCategoryGoal(cat.id, Number(e.target.value))}
-                      className="text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="text-sm border border-orange-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                       {[1, 2, 3, 4, 5].map(n => (
                         <option key={n} value={n}>每日 {n} 次</option>
@@ -203,8 +209,11 @@ export const Settings: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-card p-5 sm:p-6 mb-6">
-          <h2 className="font-semibold text-gray-900 mb-4">🔔 提醒设置</h2>
+        <div className="card-warm p-5 sm:p-6 mb-6">
+          <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Bell className="w-5 h-5 text-orange-500" />
+            提醒设置
+          </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-gray-700">每日提醒</span>
@@ -217,7 +226,7 @@ export const Settings: React.FC = () => {
               <select
                 value={settings.reminderTime}
                 onChange={(e) => setReminder(true, e.target.value)}
-                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-sm border border-orange-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 {Array.from({ length: 24 }, (_, i) => (
                   <option key={i} value={`${String(i).padStart(2, '0')}:00`}>
@@ -229,8 +238,11 @@ export const Settings: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">💾 数据管理</h2>
+        <div className="card-warm p-5 sm:p-6">
+          <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Database className="w-5 h-5 text-orange-500" />
+            数据管理
+          </h2>
           <div className="space-y-2">
             <button
               onClick={handleExport}
@@ -335,7 +347,7 @@ export const Settings: React.FC = () => {
                     className={cn(
                       'w-10 h-10 rounded-lg text-xl flex items-center justify-center transition-all',
                       profile.avatar === emoji
-                        ? 'bg-blue-100 ring-2 ring-blue-500'
+                        ? 'bg-orange-100 ring-2 ring-orange-500'
                         : 'bg-gray-100 hover:bg-gray-200'
                     )}
                   >
@@ -353,7 +365,7 @@ export const Settings: React.FC = () => {
               type="text"
               value={editForm.username}
               onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="请输入用户名"
             />
           </div>
@@ -365,7 +377,7 @@ export const Settings: React.FC = () => {
               type="text"
               value={editForm.bio}
               onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="介绍一下自己"
             />
           </div>
@@ -377,7 +389,7 @@ export const Settings: React.FC = () => {
               type="tel"
               value={editForm.phone}
               onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="请输入手机号"
             />
           </div>
@@ -389,7 +401,7 @@ export const Settings: React.FC = () => {
               type="email"
               value={editForm.email}
               onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="请输入邮箱"
             />
           </div>

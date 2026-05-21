@@ -7,11 +7,6 @@ export default {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       colors: {
-        fitness: '#ef4444',
-        work: '#3b82f6',
-        english: '#22c55e',
-        side: '#f59e0b',
-        ielts: '#a855f7',
         brand: {
           50: '#fff7ed',
           100: '#ffedd5',

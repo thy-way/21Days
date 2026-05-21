@@ -25,7 +25,7 @@ export interface Task {
 export interface CheckIn {
   id?: number;
   taskId: string;
-  categoryId: CategoryId;
+  categoryId: string;
   date: string;
   timestamp: number;
   note?: string;
@@ -57,7 +57,7 @@ export interface UserSettings {
 export interface DailyStats {
   date: string;
   totalCheckIns: number;
-  byCategory: Record<CategoryId, number>;
+  byCategory: Record<string, number>;
   byTask: Record<string, number>;
   isCompleted: boolean;
 }

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { db, initializeDatabase } from '../db';
-import { CheckIn, CategoryId, DailyStats, WeeklyStats, Category, Task, QuadrantType, DailySummary } from '../types';
+import { CheckIn, DailyStats, WeeklyStats, Category, Task, QuadrantType, DailySummary } from '../types';
 import { DEFAULT_CATEGORIES, DEFAULT_TASKS } from '../types/categories';
 import {
   format,
@@ -25,7 +25,7 @@ interface CheckInState {
   loadCategories: () => Promise<void>;
   loadTasks: () => Promise<void>;
   loadDateCheckIns: (date: string) => Promise<CheckIn[]>;
-  addCheckIn: (taskId: string, categoryId: CategoryId, duration?: number, quantity?: number, note?: string, photo?: string) => Promise<CheckIn>;
+  addCheckIn: (taskId: string, categoryId: string, duration?: number, quantity?: number, note?: string, photo?: string) => Promise<CheckIn>;
   removeCheckIn: (id: number) => Promise<void>;
   getDailyStats: (date: string) => Promise<DailyStats>;
   getWeeklyStats: (date?: Date) => Promise<WeeklyStats>;
@@ -73,7 +73,7 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     return await db.checkIns.where('date').equals(date).toArray();
   },
 
-  addCheckIn: async (taskId: string, categoryId: CategoryId, duration?: number, quantity?: number, note?: string, photo?: string) => {
+  addCheckIn: async (taskId: string, categoryId: string, duration?: number, quantity?: number, note?: string, photo?: string) => {
     const now = Date.now();
     const date = format(now, 'yyyy-MM-dd');
 
@@ -119,7 +119,7 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
     const checkIns = await db.checkIns.where('date').equals(date).toArray();
     const categories = get().categories;
 
-    const byCategory: Record<CategoryId, number> = {} as Record<CategoryId, number>;
+    const byCategory: Record<string, number> = {};
     const byTask: Record<string, number> = {};
 
     categories.forEach((cat) => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 interface DialogProps {
@@ -14,6 +14,8 @@ export const Dialog: React.FC<DialogProps> = ({
   title,
   children,
 }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -22,6 +24,7 @@ export const Dialog: React.FC<DialogProps> = ({
     if (open) {
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
+      dialogRef.current?.focus();
     }
 
     return () => {
@@ -33,12 +36,21 @@ export const Dialog: React.FC<DialogProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title || '对话框'}
+    >
       <div
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+      <div
+        ref={dialogRef}
+        tabIndex={-1}
+        className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden outline-none"
+      >
         {title && (
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <h3 className="text-lg font-semibold text-gray-900">{title}</h3>

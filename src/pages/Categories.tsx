@@ -193,7 +193,7 @@ export const Categories: React.FC = () => {
 
   const confirmCheckIn = async (duration?: number, quantity?: number, note?: string, photo?: string) => {
     if (selectedPlanTask) {
-      await addCheckIn(`plan-${selectedPlanTask.planId}-${selectedPlanTask.name}`, selectedPlanTask.categoryId as any, duration, quantity, note, photo);
+      await addCheckIn(`plan-${selectedPlanTask.planId}-${selectedPlanTask.name}`, selectedPlanTask.categoryId, duration, quantity, note, photo);
     }
   };
 

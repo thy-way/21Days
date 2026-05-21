@@ -263,14 +263,14 @@ export const Stats: React.FC = () => {
                         <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
                           <div
                             className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: getCategoryColor(checkIn.categoryId, categories as any) }}
+                            style={{ backgroundColor: getCategoryColor(checkIn.categoryId, categories as unknown as { id: string; name: string; color: string }[]) }}
                           />
                           <div className="flex-1">
                             <div className="font-medium text-gray-800">
                               {getTaskName(checkIn.taskId)}
                             </div>
                             <div className="text-sm text-gray-500">
-                              {getCategoryName(checkIn.categoryId, categories as any)}
+                              {getCategoryName(checkIn.categoryId, categories as unknown as { id: string; name: string; color: string }[])}
                               {checkIn.duration && ` · ${checkIn.duration}分钟`}
                               {checkIn.note && ` · ${checkIn.note}`}
                             </div>
@@ -327,11 +327,11 @@ export const Stats: React.FC = () => {
                       key={catId}
                       className="px-3 py-1.5 rounded-lg text-sm font-medium"
                       style={{
-                        backgroundColor: `${getCategoryColor(catId, categories as any)}15`,
-                        color: getCategoryColor(catId, categories as any),
+                        backgroundColor: `${getCategoryColor(catId, categories as unknown as { id: string; name: string; color: string }[])}15`,
+                        color: getCategoryColor(catId, categories as unknown as { id: string; name: string; color: string }[]),
                       }}
                     >
-                      {getCategoryName(catId, categories as any)}: {count}
+                      {getCategoryName(catId, categories as unknown as { id: string; name: string; color: string }[])}: {count}
                     </span>
                   ))}
                 </div>

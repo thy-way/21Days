@@ -89,7 +89,7 @@ export const Home: React.FC = () => {
 
   const confirmCheckIn = async (duration?: number, quantity?: number, note?: string, photo?: string) => {
     if (selectedPlanTask) {
-      await addCheckIn(`plan-${selectedPlanTask.planId}-${selectedPlanTask.name}`, selectedPlanTask.categoryId as any, duration, quantity, note, photo);
+      await addCheckIn(`plan-${selectedPlanTask.planId}-${selectedPlanTask.name}`, selectedPlanTask.categoryId, duration, quantity, note, photo);
     }
   };
 
@@ -192,7 +192,7 @@ export const Home: React.FC = () => {
         <TomatoTimer taskName={tomatoTask.name}
           onCheckIn={(duration) => {
             if (tomatoTask.planId && tomatoTask.planCategoryId) {
-              addCheckIn(`plan-${tomatoTask.planId}-${tomatoTask.name}`, tomatoTask.planCategoryId as any, duration);
+              addCheckIn(`plan-${tomatoTask.planId}-${tomatoTask.name}`, tomatoTask.planCategoryId, duration);
             }
             setTomatoTask(null);
           }}

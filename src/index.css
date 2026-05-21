@@ -56,4 +56,17 @@
   .card-warm {
     @apply bg-white rounded-xl shadow-sm border border-gray-100;
   }
+
+  .brand-glow {
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.2);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

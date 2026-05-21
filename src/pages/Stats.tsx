@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { format, subDays, parseISO, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useCheckInStore } from '@/store';
@@ -42,33 +42,35 @@ export const Stats: React.FC = () => {
   // Get week date range
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Monday
   const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
-  const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
+  const weekDays = useMemo(() =>
+    eachDayOfInterval({ start: weekStart, end: weekEnd }),
+    [weekStart, weekEnd]
+  );
 
   useEffect(() => {
     const loadWeeklyData = async (): Promise<void> => {
-      const records: DailyRecord[] = [];
-
-      for (const day of weekDays) {
+      const results = await Promise.all(weekDays.map(async (day) => {
         const dateStr = format(day, 'yyyy-MM-dd');
-        const stats = await getDailyStats(dateStr);
-        
-        const dayCheckIns = await useCheckInStore.getState().loadDateCheckIns(dateStr);
-        
+        const [stats, dayCheckIns] = await Promise.all([
+          getDailyStats(dateStr),
+          useCheckInStore.getState().loadDateCheckIns(dateStr),
+        ]);
+
         const categoryCount: Record<string, number> = {};
         dayCheckIns.forEach(ci => {
           categoryCount[ci.categoryId] = (categoryCount[ci.categoryId] || 0) + 1;
         });
 
-        records.push({
+        return {
           date: dateStr,
           checkIns: dayCheckIns,
-          totalDuration: stats.totalCheckIns * 30, // Approximate
+          totalDuration: stats.totalCheckIns * 30,
           totalCount: stats.totalCheckIns,
           categories: categoryCount,
-        });
-      }
+        };
+      }));
 
-      setWeeklyRecords(records);
+      setWeeklyRecords(results);
     };
 
     loadWeeklyData();

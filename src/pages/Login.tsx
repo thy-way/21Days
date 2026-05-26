@@ -42,23 +42,25 @@ export const Login: React.FC = () => {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm animate-slide-up">
           {/* Logo */}
-          <div className="text-center mb-10">
-            <div className="relative inline-flex items-center justify-center mb-4">
-              <div className="relative">
-                <span className="text-6xl font-extrabold tracking-tight brand-text-gradient -skew-x-2">
+          {/* Logo */}
+          <div className="text-center mb-12">
+            <div className="relative inline-block mb-6">
+              <div className="w-28 h-28 rounded-full bg-green-50/25 border border-green-300/30 flex items-center justify-center">
+                <span className="text-6xl font-extrabold italic skew-x-3 tracking-tight text-amber-300 inline-flex items-center justify-center w-full h-full leading-none">
                   21
                 </span>
-                <span className="absolute -bottom-3 -right-2 text-sm font-bold text-amber-500 tracking-widest">Days</span>
               </div>
+              <span className="absolute -bottom-0.5 -right-0 text-[11px] font-bold text-white bg-orange-500 px-2.5 py-0.5 rounded-full">
+                Days
+              </span>
             </div>
-            <p className="text-amber-600/70 text-sm mt-1 font-medium">21 天习惯养成计划</p>
+            <div className="text-sm text-orange-100/80 tracking-wide">习惯养成计划</div>
             <div className="flex items-center justify-center gap-2 mt-3">
-              <span className="w-6 h-px bg-orange-200" />
-              <span className="text-xs font-medium text-orange-400 tracking-[0.2em]">坚持向上的生命力</span>
-              <span className="w-6 h-px bg-orange-200" />
+              <span className="w-6 h-px bg-orange-200/50" />
+              <span className="text-xs font-medium text-orange-300 tracking-[0.2em]">坚持向上的生命力</span>
+              <span className="w-6 h-px bg-orange-200/50" />
             </div>
           </div>
-
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username */}
@@ -149,17 +151,6 @@ export const Login: React.FC = () => {
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-gray-100 dark:bg-gray-700" />
-            <span className="text-xs text-gray-300 dark:text-gray-500 tracking-wider">DEMO</span>
-            <div className="flex-1 h-px bg-gray-100 dark:bg-gray-700" />
-          </div>
-
-          {/* Demo hint */}
-          <p className="text-center text-xs text-gray-400 dark:text-gray-500">
-            任意用户名密码即可登录
-          </p>
 
           {/* Day indicator */}
           <div className="text-center mt-10">

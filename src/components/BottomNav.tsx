@@ -12,7 +12,7 @@ const navItems = [
 
 export const BottomNav: React.FC = () => {
   return (
-    <nav aria-label="主要导航" className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-100 z-40 shadow-[0_-2px_12px_rgba(0,0,0,0.06)]">
+    <nav aria-label="主要导航" className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-t border-gray-100 dark:border-gray-700 z-40 shadow-[0_-2px_12px_rgba(0,0,0,0.06)]">
       <div className="max-w-6xl mx-auto px-2">
         <div className="flex justify-around">
           {navItems.map(({ to, icon: Icon, label }) => (
@@ -22,7 +22,7 @@ export const BottomNav: React.FC = () => {
               className={({ isActive }) =>
                 cn(
                   'flex flex-col items-center py-2.5 px-3 sm:px-4 text-xs sm:text-sm transition-all duration-200 relative',
-                  isActive ? 'text-orange-500' : 'text-gray-400 hover:text-gray-600'
+                  isActive ? 'text-orange-500' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
                 )
               }
             >
@@ -33,7 +33,7 @@ export const BottomNav: React.FC = () => {
                   )}
                   <div className={cn(
                     'rounded-xl p-1.5 transition-all duration-200',
-                    isActive ? 'bg-orange-50 brand-glow' : ''
+                    isActive ? 'bg-orange-50 dark:bg-orange-500/20 brand-glow' : ''
                   )}>
                     <Icon className={cn(
                       'w-5 h-5 sm:w-6 sm:h-6 transition-all duration-200',

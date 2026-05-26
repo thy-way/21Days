@@ -4,7 +4,7 @@ import { zhCN } from 'date-fns/locale';
 import { useCheckInStore } from '@/store';
 import { CheckIn, DailySummary } from '@/types';
 import { cn } from '@/utils';
-import { Calendar, Target, FileText, ChevronLeft, ChevronRight, ChevronDown, Save, Edit3, Book, BarChart3, Check } from 'lucide-react';
+import { Calendar, Target, FileText, ChevronLeft, ChevronRight, ChevronDown, Save, Edit3, Book, BarChart3, Check, MessageCircle } from 'lucide-react';
 
 interface DailyRecord {
   date: string;
@@ -146,53 +146,53 @@ export const Stats: React.FC = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="p-2.5 bg-orange-500 rounded-xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+            <div className="p-3 bg-orange-500 rounded-xl">
               <BarChart3 className="w-6 h-6 text-white" />
             </div>
             <div>
               <span className="brand-text-gradient">21Days</span>
-              <span className="text-gray-400 text-base font-normal ml-2">复盘总结</span>
+              <span className="text-gray-400 dark:text-gray-500 text-base font-normal ml-2">复盘总结</span>
             </div>
           </h1>
-          <p className="text-amber-600/60 mt-1 text-sm">回顾每日打卡，分析成长轨迹</p>
+          <p className="text-amber-600/60 dark:text-amber-400/60 mt-1 text-sm">回顾每日打卡，分析成长轨迹</p>
         </div>
 
         {/* Weekly Summary Card */}
         <div className="card-warm p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">本周概况</h2>
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">本周概况</h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={handlePrevWeek}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
+                <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </button>
-              <span className="text-sm font-medium text-gray-700 min-w-[120px] text-center">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[120px] text-center">
                 {format(weekStart, 'MM/dd')} - {format(weekEnd, 'MM/dd')}
               </span>
               <button
                 onClick={handleNextWeek}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
-                <ChevronRight className="w-5 h-5 text-gray-600" />
+                <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </button>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-white rounded-xl border border-gray-200">
-              <div className="text-3xl font-bold text-gray-800">{weeklyTotal}</div>
-              <div className="text-sm text-gray-500 mt-1">本周打卡</div>
+            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600">
+              <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{weeklyTotal}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">本周打卡</div>
             </div>
-            <div className="text-center p-4 bg-white rounded-xl border border-gray-200">
-              <div className="text-3xl font-bold text-gray-800">{weeklyAvg}</div>
-              <div className="text-sm text-gray-500 mt-1">日均打卡</div>
+            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600">
+              <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{weeklyAvg}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">日均打卡</div>
             </div>
-            <div className="text-center p-4 bg-white rounded-xl border border-gray-200">
-              <div className="text-3xl font-bold text-gray-800">{completedDays}/7</div>
-              <div className="text-sm text-gray-500 mt-1">打卡天数</div>
+            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600">
+              <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{completedDays}/7</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">打卡天数</div>
             </div>
           </div>
         </div>
@@ -216,15 +216,15 @@ export const Stats: React.FC = () => {
                     isSelected
                       ? 'brand-gradient text-white'
                       : hasCheckIns
-                        ? 'bg-orange-50 text-gray-800'
-                        : 'bg-gray-50 text-gray-400',
+                        ? 'bg-orange-50 dark:bg-orange-500/20 text-gray-800 dark:text-gray-200'
+                        : 'bg-gray-50 dark:bg-slate-800 text-gray-400 dark:text-gray-500',
                     isToday && !isSelected && 'ring-2 ring-orange-400'
                   )}
                 >
                   <div className="text-xs mb-1">{format(day, 'EEE', { locale: zhCN })}</div>
                   <div className={cn(
                     'text-lg font-semibold',
-                    isSelected ? 'text-white' : 'text-gray-800'
+                    isSelected ? 'text-white' : 'text-gray-800 dark:text-gray-200'
                   )}>
                     {format(day, 'd')}
                   </div>
@@ -241,11 +241,11 @@ export const Stats: React.FC = () => {
         {selectedDay && (
           <div className="card-warm p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-orange-500" />
                 {format(parseISO(selectedDay), 'yyyy年MM月dd日 EEEE', { locale: zhCN })}
               </h2>
-              <div className="flex items-center gap-3 text-sm text-gray-500">
+              <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                 <span className="flex items-center gap-1">
                   <Target className="w-4 h-4" />
                   {selectedDayCheckIns.length} 项任务
@@ -260,22 +260,22 @@ export const Stats: React.FC = () => {
                   {selectedDayCheckIns.map((checkIn, idx) => {
                     return (
                       <div key={idx}>
-                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                        <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-slate-800 rounded-xl">
                           <div
                             className="w-3 h-3 rounded-full"
                             style={{ backgroundColor: getCategoryColor(checkIn.categoryId, categories as unknown as { id: string; name: string; color: string }[]) }}
                           />
                           <div className="flex-1">
-                            <div className="font-medium text-gray-800">
+                            <div className="font-medium text-gray-800 dark:text-gray-200">
                               {getTaskName(checkIn.taskId)}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
                               {getCategoryName(checkIn.categoryId, categories as unknown as { id: string; name: string; color: string }[])}
                               {checkIn.duration && ` · ${checkIn.duration}分钟`}
                               {checkIn.note && ` · ${checkIn.note}`}
                             </div>
                           </div>
-                          <div className="text-sm text-gray-400">
+                          <div className="text-sm text-gray-400 dark:text-gray-500">
                             {format(new Date(checkIn.timestamp), 'HH:mm')}
                           </div>
                         </div>
@@ -286,7 +286,7 @@ export const Stats: React.FC = () => {
                                 value={editingComments[checkIn.id!] ?? ''}
                                 onChange={(e) => setEditingComments(prev => ({ ...prev, [checkIn.id!]: e.target.value }))}
                                 placeholder="添加评论..."
-                                className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                className="flex-1 px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                               />
                               <button
                                 onClick={() => handleSaveComment(checkIn.id!)}
@@ -297,7 +297,7 @@ export const Stats: React.FC = () => {
                               </button>
                             </div>
                           ) : checkIn.comment ? (
-                            <div className="text-sm text-gray-500 italic">💬 {checkIn.comment}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 italic flex items-center gap-1"><MessageCircle className="w-3.5 h-3.5" /> {checkIn.comment}</div>
                           ) : null}
                         </div>
                       </div>
@@ -305,7 +305,7 @@ export const Stats: React.FC = () => {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-400">
+                <div className="text-center py-8 text-gray-400 dark:text-gray-500">
                   <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
                   <p>当日无打卡记录</p>
                 </div>
@@ -314,8 +314,8 @@ export const Stats: React.FC = () => {
 
             {/* Category Summary */}
             {selectedDayCheckIns.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <h3 className="text-sm font-medium text-gray-600 mb-3">分类统计</h3>
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">分类统计</h3>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(
                     selectedDayCheckIns.reduce((acc, ci) => {
@@ -341,12 +341,12 @@ export const Stats: React.FC = () => {
             {/* Previous Entries for this day */}
             {selectedDaySummaries.length > 1 && (
               <div className="mt-4">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">历史提交记录（共 {selectedDaySummaries.length} 条）</h3>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">历史提交记录（共 {selectedDaySummaries.length} 条）</h3>
                 <div className="space-y-2">
                   {selectedDaySummaries.slice(1).map((s, idx) => (
-                    <div key={s.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                      <p className="text-xs text-gray-400 mb-1">#{idx + 2} · {format(new Date(s.updatedAt), 'HH:mm')}</p>
-                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{s.content}</p>
+                    <div key={s.id} className="p-3 bg-gray-50 dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">#{idx + 2} · {format(new Date(s.updatedAt), 'HH:mm')}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{s.content}</p>
                     </div>
                   ))}
                 </div>
@@ -354,9 +354,9 @@ export const Stats: React.FC = () => {
             )}
 
             {/* Daily Summary */}
-            <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-gray-600 flex items-center gap-1.5">
+                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-2">
                   <Edit3 className="w-4 h-4" />
                   今日总结
                 </h3>
@@ -376,11 +376,11 @@ export const Stats: React.FC = () => {
               <textarea
                 value={dailySummary}
                 onChange={(e) => setDailySummary(e.target.value)}
-                className="w-full px-4 py-3 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none text-sm"
+                className="w-full px-4 py-3 border border-orange-200 dark:border-orange-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                 rows={4}
                 placeholder={`记录 ${selectedDay ? format(parseISO(selectedDay), 'M月d日', { locale: zhCN }) : ''} 的收获与反思...`}
               />
-              <p className="text-xs text-gray-400 mt-1">提交后自动清空，可点击日期查看历史总结</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">提交后自动清空，可点击日期查看历史总结</p>
             </div>
           </div>
         )}
@@ -389,7 +389,7 @@ export const Stats: React.FC = () => {
         {allSummaries.length > 0 && (
           <div className="card-warm p-5 mt-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                 <Book className="w-5 h-5 text-orange-500" />
                 历史总结记录
               </h2>
@@ -412,13 +412,13 @@ export const Stats: React.FC = () => {
               {(showAllSummaries ? allSummaries : allSummaries.slice(-3)).map((s) => (
                 <div
                   key={s.id}
-                  className="p-4 bg-gray-50 rounded-xl border border-gray-100"
+                  className="p-4 bg-gray-50 dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-gray-700"
                 >
-                  <div className="flex items-center gap-2 mb-2 text-sm text-gray-500">
+                  <div className="flex items-center gap-2 mb-2 text-sm text-gray-500 dark:text-gray-400">
                     <Calendar className="w-3.5 h-3.5" />
                     {format(parseISO(s.date), 'yyyy年M月d日 EEEE', { locale: zhCN })}
                   </div>
-                  <p className="text-gray-800 whitespace-pre-wrap text-sm leading-relaxed">
+                  <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap text-sm leading-relaxed">
                     {s.content}
                   </p>
                 </div>
@@ -428,7 +428,7 @@ export const Stats: React.FC = () => {
         )}
 
         {!selectedDay && (
-          <div className="text-center py-8 text-gray-400">
+          <div className="text-center py-8 text-gray-400 dark:text-gray-500">
             <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
             <p>点击上方日期查看详细打卡记录</p>
           </div>

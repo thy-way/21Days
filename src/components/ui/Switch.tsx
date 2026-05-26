@@ -27,7 +27,7 @@ export const Switch: React.FC<SwitchProps> = ({
         <div
           className={cn(
             'w-11 h-6 rounded-full transition-colors',
-            checked ? 'bg-orange-500' : 'bg-gray-200',
+            checked ? 'bg-orange-500' : 'bg-gray-200 dark:bg-gray-600',
             disabled && 'opacity-50 cursor-not-allowed'
           )}
         />
@@ -39,7 +39,7 @@ export const Switch: React.FC<SwitchProps> = ({
         />
       </div>
       {label && (
-        <span className="ml-3 text-sm font-medium text-gray-700">{label}</span>
+        <span className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
       )}
     </label>
   );

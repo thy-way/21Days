@@ -25,7 +25,7 @@ export const useSettingsStore = create<SettingsState>()(
       settings: {
         reminderEnabled: false,
         reminderTime: '09:00',
-        theme: 'system',
+        theme: 'light',
       },
 
       initialize: async () => {
@@ -35,6 +35,10 @@ export const useSettingsStore = create<SettingsState>()(
           categories = DEFAULT_CATEGORIES;
         }
         set({ categories });
+        const { settings } = get();
+        if (settings.theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
       },
 
       updateCategoryGoal: async (id: CategoryId, goal: number) => {
@@ -58,11 +62,16 @@ export const useSettingsStore = create<SettingsState>()(
         }));
       },
 
-      setTheme: (theme) => {
-        set((state) => ({
-          settings: { ...state.settings, theme },
-        }));
-      },
+  setTheme: (theme) => {
+    set((state) => ({
+      settings: { ...state.settings, theme },
+    }));
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  },
 
       exportData: async () => {
         const { settings } = get();
@@ -122,7 +131,7 @@ export const useSettingsStore = create<SettingsState>()(
           settings: {
             reminderEnabled: false,
             reminderTime: '09:00',
-            theme: 'system',
+            theme: 'light',
           },
         });
       },

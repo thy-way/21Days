@@ -40,16 +40,16 @@ const QuadrantCell: React.FC<QuadrantCellProps> = ({
   const IconComponent = ICON_MAP[icon];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-0">
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col min-h-0">
       {/* 标题栏 */}
       <div className={cn('flex items-center gap-2 px-3 py-2 rounded-t-xl', headerBg)}>
         {IconComponent && <IconComponent className="w-4 h-4" />}
         <div className="min-w-0 flex-1">
-          <div className="font-semibold text-sm text-gray-800">{title}</div>
-          <div className="text-xs text-gray-500">{desc}</div>
+          <div className="font-semibold text-sm text-gray-800 dark:text-gray-200">{title}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">{desc}</div>
         </div>
         {taskCount > 0 && (
-          <span className="text-xs font-medium text-gray-400 bg-white/70 rounded-full px-2 py-0.5">
+          <span className="text-xs font-medium text-gray-400 dark:text-gray-500 bg-white/70 dark:bg-slate-900/70 rounded-full px-2 py-0.5">
             {taskCount}
           </span>
         )}
@@ -58,14 +58,14 @@ const QuadrantCell: React.FC<QuadrantCellProps> = ({
       {/* 任务列表 */}
       <div className={cn('px-3 py-2 space-y-1 overflow-y-auto transition-all', expanded ? 'max-h-[300px]' : 'max-h-[140px]')}>
         {taskCount > 0 ? taskContent : (
-          <div className="text-center text-gray-300 text-xs py-4">暂无任务</div>
+          <div className="text-center text-gray-300 dark:text-gray-500 text-xs py-4">暂无任务</div>
         )}
       </div>
 
       {/* 展开/收起 */}
       {taskCount > 3 && (
         <button onClick={() => setExpanded(!expanded)}
-          className="w-full py-1.5 text-xs text-gray-400 hover:text-gray-600 border-t border-gray-100 transition-colors">
+          className="w-full py-1.5 text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 border-t border-gray-100 dark:border-gray-700 transition-colors">
           {expanded ? '收起 ▲' : `展开全部 ${taskCount} 项 ▼`}
         </button>
       )}
@@ -100,14 +100,14 @@ export const Home: React.FC = () => {
     if (fromPlans.length === 0) return null;
     return fromPlans.map((pt: any) => (
       <div key={`plan-${pt.planId}-${pt.id}`}
-        className="flex items-center justify-between bg-orange-50 rounded-lg px-2.5 py-1.5 text-xs border border-orange-200 mb-1">
-        <span className="truncate text-gray-700 flex items-center gap-1.5">
+        className="flex items-center justify-between bg-orange-50 dark:bg-orange-500/20 rounded-lg px-2.5 py-1.5 text-xs border border-orange-200 dark:border-orange-700 mb-1">
+        <span className="truncate text-gray-700 dark:text-gray-300 flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />
           {pt.name}
         </span>
         <div className="flex items-center gap-1 flex-shrink-0">
           <button onClick={() => setTomatoTask({ name: pt.name, planId: pt.planId, planCategoryId: pt.planCategoryId })}
-            className="px-1.5 py-0.5 text-orange-500 hover:bg-orange-100 rounded text-xs font-medium">专注</button>
+            className="px-1.5 py-0.5 text-orange-500 hover:bg-orange-100 dark:hover:bg-orange-500/30 rounded text-xs font-medium">专注</button>
           <button onClick={() => handlePlanTaskCheckIn(pt.planId, pt.planCategoryId, pt.name)}
             className="px-1.5 py-0.5 bg-orange-500 text-white rounded text-xs hover:bg-orange-600">打卡</button>
         </div>
@@ -135,27 +135,27 @@ export const Home: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="p-2.5 bg-orange-500 rounded-xl">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+              <div className="p-3 bg-orange-500 rounded-xl">
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <div>
                 <span className="brand-text-gradient">21Days</span>
-                <span className="text-sm text-gray-400 font-normal ml-2">今日打卡</span>
+                <span className="text-sm text-gray-400 dark:text-gray-500 font-normal ml-2">今日打卡</span>
               </div>
             </h1>
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 px-2.5 py-1 bg-gray-50 rounded-full border border-gray-200">
+              <div className="flex items-center gap-1 px-2.5 py-1 bg-gray-50 dark:bg-slate-800 rounded-full border border-gray-200 dark:border-gray-600">
                 <Flame className="w-3.5 h-3.5 text-orange-500" />
                 <span className="font-semibold text-orange-600 text-sm">{streak}</span>
-                <span className="text-gray-400 text-xs">天</span>
+                <span className="text-gray-400 dark:text-gray-500 text-xs">天</span>
               </div>
-              <div className="px-2 py-1 bg-gray-50 rounded-full border border-gray-200 text-xs font-medium text-gray-500">
+              <div className="px-2 py-1 bg-gray-50 dark:bg-slate-800 rounded-full border border-gray-200 dark:border-gray-600 text-xs font-medium text-gray-500 dark:text-gray-400">
                 DAY {streak > 21 ? 21 : streak}/21
               </div>
             </div>
           </div>
-          <p className="text-amber-600/60 mt-2 flex items-center gap-1.5 text-sm">
+          <p className="text-amber-600/60 dark:text-amber-400/60 mt-2 flex items-center gap-2 text-sm">
             <Clock className="w-4 h-4" />
             {format(today, 'yyyy年M月d日 EEEE', { locale: zhCN })}
           </p>
@@ -165,10 +165,10 @@ export const Home: React.FC = () => {
 
         {/* 四象限法则 */}
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
             <Target className="w-5 h-5 mr-2 text-orange-500" />
             四象限法则
-            <span className="ml-auto text-xs font-normal text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full">优先管理</span>
+            <span className="ml-auto text-xs font-normal text-amber-500 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/20 px-2 py-0.5 rounded-full">优先管理</span>
           </h2>
 
           <div className="grid grid-cols-2 gap-3">

@@ -63,7 +63,7 @@ export const Login: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username */}
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1.5">用户名</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">用户名</label>
               <div className="relative">
                 <svg className={cn(
                   'absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors',
@@ -80,11 +80,11 @@ export const Login: React.FC = () => {
                   onBlur={() => setFocusedField(null)}
                   autoComplete="username"
                   className={cn(
-                    'w-full pl-10 pr-4 py-2.5 border rounded-lg text-sm outline-none transition-all',
+                    'w-full pl-10 pr-4 py-3 border rounded-lg text-sm outline-none transition-all',
                     'placeholder-gray-400',
                     focusedField === 'username'
                       ? 'border-orange-500 ring-2 ring-orange-500/20 bg-orange-50/30'
-                      : 'border-gray-200 hover:border-gray-300 bg-gray-50'
+                      : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 bg-gray-50 dark:bg-gray-800'
                   )}
                   placeholder="请输入用户名"
                 />
@@ -93,7 +93,7 @@ export const Login: React.FC = () => {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1.5">密码</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">密码</label>
               <div className="relative">
                 <svg className={cn(
                   'absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors',
@@ -109,11 +109,11 @@ export const Login: React.FC = () => {
                   onBlur={() => setFocusedField(null)}
                   autoComplete="current-password"
                   className={cn(
-                    'w-full pl-10 pr-4 py-2.5 border rounded-lg text-sm outline-none transition-all',
+                    'w-full pl-10 pr-4 py-3 border rounded-lg text-sm outline-none transition-all',
                     'placeholder-gray-400',
                     focusedField === 'password'
                       ? 'border-orange-500 ring-2 ring-orange-500/20 bg-orange-50/30'
-                      : 'border-gray-200 hover:border-gray-300 bg-gray-50'
+                      : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 bg-gray-50 dark:bg-gray-800'
                   )}
                   placeholder="请输入密码"
                 />
@@ -122,7 +122,7 @@ export const Login: React.FC = () => {
 
             {/* Error */}
             {error && (
-              <div className="text-red-600 text-sm text-center py-2 bg-red-50 rounded-lg border border-red-100">
+              <div className="text-red-600 dark:text-red-400 text-sm text-center py-2 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-100 dark:border-red-900">
                 {error}
               </div>
             )}
@@ -132,7 +132,7 @@ export const Login: React.FC = () => {
               type="submit"
               disabled={loading}
               className={cn(
-                'w-full py-2.5 rounded-lg font-semibold text-sm transition-colors duration-150',
+                'w-full py-3 rounded-lg font-semibold text-sm transition-colors duration-150',
                 'bg-orange-500 text-white hover:bg-orange-600',
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}
@@ -151,13 +151,13 @@ export const Login: React.FC = () => {
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-gray-100" />
-            <span className="text-xs text-gray-300 tracking-wider">DEMO</span>
-            <div className="flex-1 h-px bg-gray-100" />
+            <div className="flex-1 h-px bg-gray-100 dark:bg-gray-700" />
+            <span className="text-xs text-gray-300 dark:text-gray-500 tracking-wider">DEMO</span>
+            <div className="flex-1 h-px bg-gray-100 dark:bg-gray-700" />
           </div>
 
           {/* Demo hint */}
-          <p className="text-center text-xs text-gray-400">
+          <p className="text-center text-xs text-gray-400 dark:text-gray-500">
             任意用户名密码即可登录
           </p>
 
@@ -165,7 +165,7 @@ export const Login: React.FC = () => {
           <div className="text-center mt-10">
             <span className="inline-flex items-center gap-2 text-sm text-orange-300 font-medium tracking-widest">
               <span className="w-8 h-px brand-gradient rounded-full" />
-              <span className="bg-orange-50 text-orange-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse-soft">
+              <span className="bg-orange-50 dark:bg-orange-500/20 text-orange-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse-soft">
                 DAY {Math.min(loginDates.length + 1, 21)} / 21
               </span>
               <span className="w-8 h-px brand-gradient rounded-full" />

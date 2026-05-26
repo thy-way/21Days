@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, Check } from 'lucide-react';
+import { TrendingUp, Check, Flame } from 'lucide-react';
 
 interface ProgressCardProps {
   completed: number;
@@ -30,7 +30,7 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ completed, total }) 
             <span className="flex items-center gap-1">
               <Check className="w-4 h-4" /> 全部完成！
             </span>
-          ) : '保持节奏，坚持下去 💪'}
+          ) : <span className="flex items-center gap-1"><Flame className="w-4 h-4 text-orange-500" /> 保持节奏，坚持下去</span>}
         </span>
       </div>
     </div>

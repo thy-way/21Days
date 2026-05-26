@@ -111,21 +111,21 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 py-4 border-b border-gray-100">
+      <div className="relative bg-white dark:bg-slate-800 rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white dark:bg-slate-800 z-10 flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
           <div className="flex items-center gap-3">
             {step > 1 && (
               <button
                 onClick={() => setStep(step - 1)}
-                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
             )}
-            <div className="p-2 bg-orange-50 rounded-lg">
+            <div className="p-2 bg-orange-50 dark:bg-orange-500/20 rounded-lg">
               <Brain className="w-5 h-5 text-orange-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {step === 1 && "选择分类"}
               {step === 2 && "回答生活习惯"}
               {step === 3 && "预览计划"}
@@ -133,7 +133,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+            className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
           >
             <X className="w-5 h-5" />
           </button>
@@ -147,11 +147,11 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                 key={s}
                 className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all",
-                  s === step
-                    ? "bg-orange-500 text-white"
-                    : s < step
-                    ? "bg-gray-100 text-gray-600"
-                    : "bg-gray-100 text-gray-400"
+                    s === step
+                      ? "bg-orange-500 text-white"
+                      : s < step
+                      ? "bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300"
+                      : "bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500"
                 )}
               >
                 {s < step ? <Check className="w-4 h-4" /> : s}
@@ -171,8 +171,8 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                     className={cn(
                       "flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors",
                       selectedCategory === cat
-                        ? "border-orange-500 bg-orange-50"
-                        : "border-gray-100 bg-white hover:border-orange-200"
+                        ? "border-orange-500 bg-orange-50 dark:bg-orange-500/20"
+                        : "border-gray-100 dark:border-gray-600 bg-white dark:bg-slate-800 hover:border-orange-200 dark:hover:border-orange-600"
                     )}
                   >
                     <div
@@ -183,7 +183,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                     >
                       {CATEGORY_NAMES[cat].charAt(0)}
                     </div>
-                    <span className="text-sm font-medium text-gray-800">
+                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
                       {CATEGORY_NAMES[cat]}
                     </span>
                   </button>
@@ -197,7 +197,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
             <div className="space-y-5">
               {currentCategory.questions.map((q) => (
                 <div key={q.key}>
-                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                  <label className="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">
                     {q.question}
                   </label>
                   <div className="space-y-2">
@@ -207,8 +207,8 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                         className={cn(
                           "flex items-center p-3 rounded-xl border-2 cursor-pointer transition-all",
                           answers[q.key] === opt.value
-                            ? "border-orange-500 bg-orange-50"
-                            : "border-gray-100 hover:border-gray-200"
+                            ? "border-orange-500 bg-orange-50 dark:bg-orange-500/20"
+                            : "border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500"
                         )}
                       >
                         <input
@@ -229,14 +229,14 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                             "w-5 h-5 rounded-full border-2 flex items-center justify-center mr-3",
                             answers[q.key] === opt.value
                               ? "border-orange-500"
-                              : "border-gray-300"
+                              : "border-gray-300 dark:border-gray-500"
                           )}
                         >
                           {answers[q.key] === opt.value && (
                             <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />
                           )}
                         </div>
-                        <span className="text-sm text-gray-700">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
                           {opt.label}
                         </span>
                       </label>
@@ -250,8 +250,8 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
           {/* Step 3: Preview */}
           {step === 3 && generated && (
             <div className="space-y-3">
-              <div className="bg-gray-50 rounded-xl p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="bg-gray-50 dark:bg-slate-800 rounded-xl p-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   计划标题
                 </label>
                 <input
@@ -260,7 +260,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                   onChange={(e) =>
                     setGenerated({ ...generated, title: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                 />
               </div>
               {generated.tasks.map((task, idx) => {
@@ -284,23 +284,23 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                       >
                         {idx + 1}
                       </div>
-                      <span className="text-sm font-bold text-gray-800 flex-1">
+                      <span className="text-sm font-bold text-gray-800 dark:text-gray-200 flex-1">
                         {idx + 1}. {task.name}
                       </span>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                         任务名称
                       </label>
                       <input
                         type="text"
                         value={task.name}
                         onChange={(e) => updateTask(idx, "name", e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                         学习路线
                       </label>
                       <textarea
@@ -313,11 +313,11 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                           )
                         }
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                         四象限
                       </label>
                       <select
@@ -329,7 +329,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                             e.target.value as QuadrantType
                           )
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
                       >
                         <option value="">未分配</option>
                         {(Object.keys(QUADRANT_LABELS) as QuadrantType[]).map(
@@ -350,7 +350,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
                           {task.resources.map((r, ri) => (
                             <span
                               key={ri}
-                              className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs"
+                              className="px-2 py-1 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-400 rounded-lg text-xs"
                             >
                               {r.name}
                             </span>
@@ -366,10 +366,10 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white flex items-center justify-between px-5 py-4 border-t border-gray-100">
+        <div className="sticky bottom-0 bg-white dark:bg-slate-800 flex items-center justify-between px-5 py-4 border-t border-gray-100 dark:border-gray-700">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium"
+            className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-medium"
           >
             取消
           </button>
@@ -545,19 +545,19 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 py-4 border-b border-gray-100">
+      <div className="relative bg-white dark:bg-slate-800 rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white dark:bg-slate-800 z-10 flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-50 rounded-lg">
+            <div className="p-2 bg-orange-50 dark:bg-orange-500/20 rounded-lg">
               <Plus className="w-5 h-5 text-orange-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {isEdit ? "编辑计划" : "自定义计划"}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+            className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
           >
             <X className="w-5 h-5" />
           </button>
@@ -566,7 +566,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
         <div className="p-5 space-y-4">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               计划标题 *
             </label>
             <input
@@ -574,13 +574,13 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="输入计划标题"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               分类
             </label>
             <input
@@ -588,13 +588,13 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               placeholder="输入分类名称（如：学习、健身、工作）"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               描述（可选）
             </label>
             <textarea
@@ -602,19 +602,19 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="计划描述..."
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
             />
           </div>
 
           {/* Tasks */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 任务列表 *
               </label>
               <button
                 onClick={addTask}
-                className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100"
+                className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-500/30"
               >
                 <Plus className="w-3.5 h-3.5" />
                 添加任务
@@ -624,21 +624,21 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
               {tasks.map((task, idx) => (
                 <div
                   key={task.id}
-                  className="border border-gray-200 rounded-xl p-4 space-y-3"
+                  className="border border-gray-200 dark:border-gray-600 rounded-xl p-4 space-y-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-gray-700">
+                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                       任务 {idx + 1}
                     </span>
                     <button
                       onClick={() => removeTask(idx)}
-                      className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                      className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                       任务名称 *
                     </label>
                     <input
@@ -648,11 +648,11 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                         updateTaskField(idx, "name", e.target.value)
                       }
                       placeholder="输入任务名称"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                       学习路线
                     </label>
                     <textarea
@@ -666,11 +666,11 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                       }
                       placeholder="每行一个学习步骤"
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
                       四象限
                     </label>
                     <select
@@ -682,7 +682,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                           e.target.value as QuadrantType
                         )
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                       <option value="">未分配</option>
                       {(Object.keys(QUADRANT_LABELS) as QuadrantType[]).map(
@@ -696,12 +696,12 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs font-medium text-gray-500">
+                      <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
                         资源（可选）
                       </label>
                       <button
                         onClick={() => addResource(idx)}
-                        className="text-xs text-blue-500 hover:text-blue-600 font-medium"
+                        className="text-xs text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium"
                       >
                         + 添加
                       </button>
@@ -715,7 +715,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                             updateResource(idx, ri, "name", e.target.value)
                           }
                           placeholder="资源名称"
-                          className="flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          className="flex-1 px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                         />
                         <input
                           type="text"
@@ -724,7 +724,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                             updateResource(idx, ri, "url", e.target.value)
                           }
                           placeholder="链接（可选）"
-                          className="flex-1 px-2 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          className="flex-1 px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100"
                         />
                         <button
                           onClick={() => removeResource(idx, ri)}
@@ -738,7 +738,7 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
                 </div>
               ))}
               {tasks.length === 0 && (
-                <div className="text-center py-8 text-gray-400 text-sm">
+                <div className="text-center py-8 text-gray-400 dark:text-gray-500 text-sm">
                   暂无任务，点击"添加任务"开始
                 </div>
               )}
@@ -746,10 +746,10 @@ const CustomPlanDialog: React.FC<CustomPlanDialogProps> = ({
           </div>
         </div>
 
-        <div className="sticky bottom-0 bg-white flex items-center justify-between px-5 py-4 border-t border-gray-100">
+        <div className="sticky bottom-0 bg-white dark:bg-slate-800 flex items-center justify-between px-5 py-4 border-t border-gray-100 dark:border-gray-700">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium"
+            className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-medium"
           >
             取消
           </button>
@@ -786,7 +786,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
   );
 
   return (
-    <div className="bg-white rounded-xl shadow-card border border-gray-100 overflow-hidden hover:shadow-card-hover transition-shadow">
+    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-card-hover transition-shadow">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full text-left p-5"
@@ -802,7 +802,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
               {getCategoryName(plan.categoryId).charAt(0)}
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-gray-900 text-base truncate">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-base truncate">
                 {plan.title}
               </h3>
               <div className="flex items-center gap-2 mt-1.5">
@@ -819,13 +819,13 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
                   className={cn(
                     "px-2 py-0.5 rounded-full text-xs font-medium",
                     plan.type === "ai-generated"
-                      ? "bg-purple-50 text-purple-600"
-                      : "bg-amber-50 text-amber-600"
+                      ? "bg-purple-50 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400"
+                      : "bg-amber-50 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400"
                   )}
                 >
                   {plan.type === "ai-generated" ? "AI" : "自定义"}
                 </span>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-gray-400 dark:text-gray-500">
                   {uniqueTasks.length} 个任务
                 </span>
               </div>
@@ -837,7 +837,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
                 e.stopPropagation();
                 onEdit(plan);
               }}
-              className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+              className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/20 rounded-lg"
             >
               <Edit3 className="w-4 h-4" />
             </button>
@@ -846,14 +846,14 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
                 e.stopPropagation();
                 if (plan.id) onDelete(plan.id);
               }}
-              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+              className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
             >
               <Trash2 className="w-4 h-4" />
             </button>
             {expanded ? (
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+              <ChevronDown className="w-5 h-5 text-gray-400 dark:text-gray-500" />
             ) : (
-              <ChevronRight className="w-5 h-5 text-gray-400" />
+              <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
             )}
           </div>
         </div>
@@ -862,7 +862,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
       {expanded && (
         <div className="px-5 pb-5 space-y-2">
           {plan.description && (
-            <p className="text-sm text-gray-500 mb-2">{plan.description}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{plan.description}</p>
           )}
           {uniqueTasks.map((task, idx) => (
             <div
@@ -882,7 +882,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-800">
+                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
                     {task.name}
                   </span>
                   {task.quadrant && (
@@ -897,16 +897,16 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
                   )}
                 </div>
                 {task.learningRoute && task.learningRoute.length > 0 && (
-                  <div className="mt-1 text-xs text-gray-500 line-clamp-2">
+                  <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
                     {task.learningRoute.slice(0, 2).join(" | ")}
                   </div>
                 )}
                 {task.resources && task.resources.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                  <div className="flex flex-wrap gap-2 mt-1.5">
                     {task.resources.map((r, ri) => (
                       <span
                         key={ri}
-                        className="px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded text-xs"
+                        className="px-1.5 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 rounded text-xs"
                       >
                         {r.name}
                       </span>
@@ -968,16 +968,16 @@ export const Plan: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="p-2.5 bg-orange-500 rounded-xl">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+              <div className="p-3 bg-orange-500 rounded-xl">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <div>
                 <span className="brand-text-gradient">21Days</span>
-                <span className="text-gray-400 text-base font-normal ml-2">学习计划</span>
+                <span className="text-gray-400 dark:text-gray-500 text-base font-normal ml-2">学习计划</span>
               </div>
             </h1>
-            <p className="text-amber-600/60 mt-1 text-sm">
+            <p className="text-amber-600/60 dark:text-amber-400/60 mt-1 text-sm">
               管理你的学习计划和路线
             </p>
           </div>
@@ -994,7 +994,7 @@ export const Plan: React.FC = () => {
                 setEditPlan(null);
                 setCustomDialogOpen(true);
               }}
-              className="px-4 py-2 border border-orange-200 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-50 flex items-center gap-2"
+              className="px-4 py-2 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-400 rounded-lg text-sm font-medium hover:bg-orange-50 dark:hover:bg-orange-500/20 flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">自定义</span>
@@ -1006,14 +1006,14 @@ export const Plan: React.FC = () => {
         <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
           <button onClick={() => setSelectedModule("all")}
             className={cn("px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors",
-              selectedModule === "all" ? "bg-orange-500 text-white" : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
+              selectedModule === "all" ? "bg-orange-500 text-white" : "bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border border-gray-200 dark:border-gray-600"
             )}>
             全部
           </button>
           {(Object.keys(CATEGORY_NAMES) as CategoryId[]).map((catId) => (
             <button key={catId} onClick={() => setSelectedModule(catId)}
-              className={cn("px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5",
-                selectedModule === catId ? "bg-orange-500 text-white" : "bg-white text-gray-500 hover:text-gray-700 border border-gray-200"
+              className={cn("px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2",
+                selectedModule === catId ? "bg-orange-500 text-white" : "bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border border-gray-200 dark:border-gray-600"
               )}>
               {CATEGORY_NAMES[catId]}
             </button>
@@ -1023,7 +1023,7 @@ export const Plan: React.FC = () => {
         {/* Filtered Plans */}
         {plans.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-orange-500" />
               我的计划
               <span className="text-sm font-normal text-amber-500 ml-1">
@@ -1034,7 +1034,7 @@ export const Plan: React.FC = () => {
             {loading ? (
               <div className="text-center py-12">
                 <div className="w-8 h-8 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin mx-auto mb-3" />
-                <p className="text-gray-500 text-sm">{"加载中..."}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">{"加载中..."}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -1074,19 +1074,19 @@ export const Plan: React.FC = () => {
         {/* Empty state */}
         {plans.length === 0 && (
           <div className="text-center py-16">
-            <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-20 h-20 bg-orange-50 dark:bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <BookOpen className="w-8 h-8 text-orange-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
               {"还没有学习计划"}
             </h3>
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
               {"使用 AI 生成或自定义创建你的第一个计划"}
             </p>
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => setAiDialogOpen(true)}
-                className="px-5 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 flex items-center gap-2"
+                className="px-5 py-3 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
                 AI {"生成"}
@@ -1096,7 +1096,7 @@ export const Plan: React.FC = () => {
                   setEditPlan(null);
                   setCustomDialogOpen(true);
                 }}
-                className="px-5 py-2.5 bg-white text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center gap-2 shadow-sm border border-gray-200"
+                className="px-5 py-3 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 flex items-center gap-2 shadow-sm border border-gray-200 dark:border-gray-600"
               >
                 <Plus className="w-4 h-4" />
                 {"自定义创建"}

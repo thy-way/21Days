@@ -46,7 +46,7 @@ export const Login: React.FC = () => {
           <div className="text-center mb-12">
             <div className="relative inline-block mb-6">
               <div className="w-28 h-28 rounded-full bg-green-50/25 border border-green-300/30 flex items-center justify-center">
-                <span className="text-6xl font-extrabold italic skew-x-3 tracking-tight text-amber-300 inline-flex items-center justify-center w-full h-full leading-none">
+                <span className="text-6xl font-extrabold italic -translate-x-1 tracking-tight text-amber-300 inline-flex items-center justify-center w-full h-full leading-none">
                   21
                 </span>
               </div>

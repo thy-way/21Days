@@ -976,9 +976,6 @@ export const Plan: React.FC = () => {
                 <span className="brand-text-gradient">21Days</span>
               </div>
             </h1>
-            <p className="text-amber-600/60 dark:text-amber-400/60 mt-1 text-sm">
-              管理你的学习计划和路线
-            </p>
           </div>
           <div className="flex items-center gap-2">
             <button

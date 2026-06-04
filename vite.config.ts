@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      filename: 'sw-v2.js',
       registerType: 'autoUpdate',
       skipWaiting: true,
       clientsClaim: true,

@@ -8,6 +8,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      skipWaiting: true,
+      clientsClaim: true,
       includeAssets: ['vite.svg'],
       manifest: {
         name: '21Days',

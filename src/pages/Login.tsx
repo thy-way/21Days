@@ -18,6 +18,10 @@ export const Login: React.FC = () => {
     usernameRef.current?.focus();
   }, []);
 
+  const trimmedUsername = username.trim();
+  const userDates = trimmedUsername ? loginDates[trimmedUsername] || [] : [];
+  const day = Math.min(userDates.length + 1, 21);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -157,7 +161,7 @@ export const Login: React.FC = () => {
             <span className="inline-flex items-center gap-2 text-sm text-orange-300 font-medium tracking-widest">
               <span className="w-8 h-px brand-gradient rounded-full" />
               <span className="bg-orange-50 dark:bg-orange-500/20 text-orange-500 px-3 py-1 rounded-full text-xs font-bold animate-pulse-soft">
-                DAY {Math.min(loginDates.length + 1, 21)} / 21
+                DAY {day} / 21
               </span>
               <span className="w-8 h-px brand-gradient rounded-full" />
             </span>

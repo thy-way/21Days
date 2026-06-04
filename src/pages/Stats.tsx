@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { format, subDays, parseISO, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
+import { format, subDays, parseISO, startOfWeek, endOfWeek, eachDayOfInterval, isBefore, isAfter } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-import { useCheckInStore } from '@/store';
+import { useCheckInStore, usePlanStore } from '@/store';
 import { CheckIn, DailySummary } from '@/types';
+import { TaskCheckInDialog } from '@/components/CheckInDialog';
 import { cn } from '@/utils';
-import { Calendar, Target, FileText, ChevronLeft, ChevronRight, ChevronDown, Save, Edit3, Book, BarChart3, Check, MessageCircle } from 'lucide-react';
+import { Calendar, Target, FileText, ChevronLeft, ChevronRight, ChevronDown, Save, Edit3, Book, BarChart3, Check, MessageCircle, Plus, X } from 'lucide-react';
 
 interface DailyRecord {
   date: string;
@@ -25,10 +26,18 @@ const getCategoryColor = (categoryId: string, categories: { id: string; name: st
 };
 
 export const Stats: React.FC = () => {
-  const { categories, tasks, getDailyStats, loadDailySummary, saveDailySummary, loadAllSummaries, updateCheckInComment } = useCheckInStore();
+  const { categories, tasks, getDailyStats, loadDailySummary, saveDailySummary, loadAllSummaries, updateCheckInComment, addCheckIn, loadDateCheckIns } = useCheckInStore();
+  const { plans, loadPlans } = usePlanStore();
+  React.useEffect(() => { loadPlans(); }, [loadPlans]);
+  const activePlanTasks = React.useMemo(() =>
+    plans.filter(p => p.isActive).flatMap(p =>
+      p.tasks.map(t => ({ ...t, planId: p.id!, planCategoryId: p.categoryId }))
+    ),
+    [plans]
+  );
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [weeklyRecords, setWeeklyRecords] = useState<DailyRecord[]>([]);
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [selectedDay, setSelectedDay] = useState<string | null>(format(new Date(), 'yyyy-MM-dd'));
   const [selectedDayCheckIns, setSelectedDayCheckIns] = useState<CheckIn[]>([]);
   const [dailySummary, setDailySummary] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -38,6 +47,9 @@ export const Stats: React.FC = () => {
   const [selectedDaySummaries, setSelectedDaySummaries] = useState<DailySummary[]>([]);
   const [editingComments, setEditingComments] = useState<Record<number, string>>({});
   const [savingCommentId, setSavingCommentId] = useState<number | null>(null);
+  const [checkInPickerOpen, setCheckInPickerOpen] = useState(false);
+  const [checkInDialogOpen, setCheckInDialogOpen] = useState(false);
+  const [checkInTask, setCheckInTask] = useState<{ planId: number; categoryId: string; name: string } | null>(null);
 
   // Get week date range
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Monday
@@ -82,26 +94,39 @@ export const Stats: React.FC = () => {
   }, [loadAllSummaries]);
 
   const handlePrevWeek = () => {
-    setCurrentWeek(subDays(weekStart, 1));
-    setSelectedDay(null);
+    const newStart = subDays(weekStart, 1);
+    setCurrentWeek(newStart);
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const newEnd = subDays(weekEnd, 7);
+    const inRange = !isBefore(today, format(newStart, 'yyyy-MM-dd'))
+                     && !isAfter(today, format(newEnd, 'yyyy-MM-dd'));
+    setSelectedDay(inRange ? today : null);
+  };
+  const handleNextWeek = () => {
+    const newStart = subDays(weekStart, -7);
+    setCurrentWeek(newStart);
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const newEnd = subDays(weekEnd, -7);
+    const inRange = !isBefore(today, format(newStart, 'yyyy-MM-dd'))
+                     && !isAfter(today, format(newEnd, 'yyyy-MM-dd'));
+    setSelectedDay(inRange ? today : null);
   };
 
-  const handleNextWeek = () => {
-    setCurrentWeek(subDays(weekEnd, -7));
-    setSelectedDay(null);
-  };
+  // Auto-load details whenever selectedDay or weeklyRecords changes
+  useEffect(() => {
+    if (!selectedDay) return;
+    const record = weeklyRecords.find(r => r.date === selectedDay);
+    setSelectedDayCheckIns(record?.checkIns || []);
+    loadDailySummary(selectedDay).then(summaries => {
+      setSelectedDaySummaries(summaries);
+      setDailySummary(summaries.length > 0 ? summaries[0].content : "");
+    });
+  }, [selectedDay, weeklyRecords, loadDailySummary]);
 
   const handleDayClick = (date: string) => {
     setSelectedDay(date);
     setSaved(false);
     setEditingComments({});
-    const record = weeklyRecords.find(r => r.date === date);
-    setSelectedDayCheckIns(record?.checkIns || []);
-    // Store all entries, show latest in editor
-    loadDailySummary(date).then(summaries => {
-      setSelectedDaySummaries(summaries);
-      setDailySummary(summaries.length > 0 ? summaries[0].content : '');
-    });
   };
 
   const handleSaveSummary = async () => {
@@ -245,6 +270,13 @@ export const Stats: React.FC = () => {
                 <Calendar className="w-5 h-5 text-orange-500" />
                 {format(parseISO(selectedDay), 'yyyy年MM月dd日 EEEE', { locale: zhCN })}
               </h2>
+              {format(parseISO(selectedDay), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
+                <button
+                  onClick={() => setCheckInPickerOpen(true)}
+                  className="brand-gradient text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1.5 hover:opacity-90 transition-opacity">
+                  <Plus className="w-4 h-4" /> 今日打卡
+                </button>
+              )}
               <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                 <span className="flex items-center gap-1">
                   <Target className="w-4 h-4" />
@@ -426,16 +458,75 @@ export const Stats: React.FC = () => {
             </div>
           </div>
         )}
-
-        {!selectedDay && (
-          <div className="text-center py-8 text-gray-400 dark:text-gray-500">
-            <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>点击上方日期查看详细打卡记录</p>
+      </div>
+        {/* Task picker modal */}
+        {checkInPickerOpen && (
+          <div
+            className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4"
+            onClick={() => setCheckInPickerOpen(false)}>
+            <div
+              className="bg-white dark:bg-slate-800 rounded-2xl p-5 w-full max-w-md max-h-[70vh] overflow-y-auto"
+              onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">选择任务</h3>
+                <button onClick={() => setCheckInPickerOpen(false)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              {activePlanTasks.length === 0 ? (
+                <p className="text-gray-500 text-center py-6">暂无 active plan 任务</p>
+              ) : (
+                <div className="space-y-2">
+                  {activePlanTasks.map(t => (
+                    <button
+                      key={`${t.planId}-${t.id}`}
+                      onClick={() => {
+                        setCheckInTask({ planId: t.planId!, categoryId: t.planCategoryId, name: t.name });
+                        setCheckInPickerOpen(false);
+                        setCheckInDialogOpen(true);
+                      }}
+                      className="w-full text-left p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-slate-700 transition-colors">
+                      <div className="font-medium text-gray-800 dark:text-gray-200">{t.name}</div>
+                      {t.learningRoute && t.learningRoute[0] && (
+                        <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{t.learningRoute[0]}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
-      </div>
-    </div>
-  );
+
+        {/* Check-in dialog (reused from Home page) */}
+        {checkInTask && (
+          <TaskCheckInDialog
+            open={checkInDialogOpen}
+            onClose={() => {
+              setCheckInDialogOpen(false);
+              setCheckInTask(null);
+            }}
+            planTaskName={checkInTask.name}
+            onConfirm={async (duration, quantity, note, photo) => {
+              await addCheckIn(
+                `plan-${checkInTask.planId}-${checkInTask.name}`,
+                checkInTask.categoryId,
+                duration, quantity, note, photo
+              );
+              const today = format(new Date(), 'yyyy-MM-dd');
+              const refreshed = await loadDateCheckIns(today);
+              setSelectedDayCheckIns(refreshed);
+              setWeeklyRecords(prev => prev.map(r =>
+                r.date === today
+                  ? { ...r, checkIns: refreshed, totalCount: refreshed.length }
+                  : r
+              ));
+              setCheckInTask(null);
+            }}
+          />
+        )}
+        </div>
+    );
 };
 
 export default Stats;

@@ -177,7 +177,6 @@ export const Stats: React.FC = () => {
             </div>
             <div>
               <span className="brand-text-gradient">21Days</span>
-              <span className="text-gray-400 dark:text-gray-500 text-base font-normal ml-2">复盘总结</span>
             </div>
           </h1>
           <p className="text-amber-600/60 dark:text-amber-400/60 mt-1 text-sm">回顾每日打卡，分析成长轨迹</p>

@@ -120,7 +120,6 @@ export const Settings: React.FC = () => {
             </div>
             <div>
               <span className="brand-text-gradient">21Days</span>
-              <span className="text-gray-400 dark:text-gray-500 text-base font-normal ml-2">设置</span>
             </div>
           </h1>
           <p className="text-amber-600/60 dark:text-amber-400/60 mt-1 text-sm">自定义你的打卡体验</p>

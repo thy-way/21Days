@@ -209,7 +209,6 @@ export const Categories: React.FC = () => {
               </div>
               <div>
                 <span className="brand-text-gradient">21Days</span>
-                <span className="text-sm text-gray-400 dark:text-gray-500 font-normal ml-2">全部任务</span>
               </div>
             </h1>
               <div className="flex items-center gap-2">

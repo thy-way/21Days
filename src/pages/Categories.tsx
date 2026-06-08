@@ -10,16 +10,20 @@ import { useCheckInStore, usePlanStore } from '@/store';
 import { UserPlanTask, UserPlan, CategoryId } from '@/types';
 import { cn } from '@/utils';
 import { CATEGORY_STYLES, getCategoryStyles } from '@/utils/categoryStyles';
+import { CATEGORY_NAMES, QUADRANT_LABELS } from '@/constants/categories';
 import { TaskCheckInDialog } from '@/components/CheckInDialog';
 import { ProgressCard } from '@/components/ProgressCard';
 
-const CATEGORY_TABS = [
-  { id: 'coding', label: '编程学习', icon: Code },
-  { id: 'english', label: '英语', icon: Globe },
-  { id: 'exam', label: '考试', icon: GraduationCap },
-  { id: 'fitness', label: '健身', icon: Dumbbell },
-  { id: 'side', label: '副业', icon: Briefcase },
-];
+const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
+  coding: Code, english: Globe, exam: GraduationCap,
+  fitness: Dumbbell, side: Briefcase,
+};
+
+const CATEGORY_TABS = (Object.keys(CATEGORY_NAMES) as CategoryId[]).map((id) => ({
+  id,
+  label: CATEGORY_NAMES[id],
+  icon: CATEGORY_ICONS[id] || BookOpen,
+}));
 
 // ===================== PlanTaskDetailDialog =====================
 
@@ -118,10 +122,7 @@ const PlanTaskDetailDialog: React.FC<PlanTaskDetailDialogProps> = ({ open, onClo
                   : task.quadrant === 'not-urgent-important' ? 'text-blue-600'
                   : 'text-gray-600'
               )}>
-                {task.quadrant === 'urgent-important' ? '重要紧急'
-                  : task.quadrant === 'urgent-not-important' ? '紧急不重要'
-                  : task.quadrant === 'not-urgent-important' ? '重要不紧急'
-                  : '不重要不紧急'}
+                {QUADRANT_LABELS[task.quadrant]}
               </span>
             </div>
           )}
@@ -255,7 +256,7 @@ export const Categories: React.FC = () => {
             {activePlansForTab.map(plan => {
               const style = getCategoryStyles(plan.categoryId);
               return (
-                <div key={plan.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div key={plan.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-card border border-gray-100 dark:border-gray-700 overflow-hidden card-warm">
                   {/* Plan Header */}
                   <div className={cn('px-5 py-3 flex items-center gap-2', style.bgLight)}>
                     <BookOpen className={cn('w-4 h-4', style.text)} />
@@ -288,10 +289,7 @@ export const Categories: React.FC = () => {
                               </span>
                               {task.quadrant && (
                                 <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">
-                                  · {task.quadrant === 'urgent-important' ? '重要紧急'
-                                    : task.quadrant === 'urgent-not-important' ? '紧急不重要'
-                                    : task.quadrant === 'not-urgent-important' ? '重要不紧急'
-                                    : '不重要不紧急'}
+                                  · {QUADRANT_LABELS[task.quadrant]}
                                 </span>
                               )}
                             </div>

@@ -8,6 +8,11 @@ interface TomatoTimerProps {
   onClose: () => void;
 }
 
+const POMODORO_DEFAULT = 25;
+const POMODORO_MIN = 1;
+const CIRCLE_RADIUS = 54;
+const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
+
 const TIME_OPTIONS = [
   { label: '15m', value: 15 },
   { label: '25m', value: 25 },
@@ -17,8 +22,8 @@ const TIME_OPTIONS = [
 ];
 
 export const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, onClose }) => {
-  const [duration, setDuration] = useState(25);
-  const [remaining, setRemaining] = useState(25 * 60);
+  const [duration, setDuration] = useState(POMODORO_DEFAULT);
+  const [remaining, setRemaining] = useState(POMODORO_DEFAULT * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [completed, setCompleted] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -56,7 +61,7 @@ export const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, o
 
   const handleFinish = () => {
     const elapsed = duration * 60 - remaining;
-    const actualMinutes = Math.max(1, Math.round(elapsed / 60));
+    const actualMinutes = Math.max(POMODORO_MIN, Math.round(elapsed / 60));
     onCheckIn(actualMinutes);
     onClose();
   };
@@ -68,7 +73,7 @@ export const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, o
   };
 
   const progress = 1 - remaining / (duration * 60);
-  const circumference = 2 * Math.PI * 54;
+  const circumference = CIRCUMFERENCE;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -124,7 +129,7 @@ export const TomatoTimer: React.FC<TomatoTimerProps> = ({ taskName, onCheckIn, o
           )}
 
           {completed ? (
-            <div className="space-y-3">
+            <div className="space-y-3 animate-celebration">
               <div className="flex items-center justify-center gap-2 text-green-600">
                 <Check className="w-5 h-5" /><span className="font-medium">专注完成！</span>
               </div>

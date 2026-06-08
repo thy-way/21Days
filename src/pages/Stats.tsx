@@ -205,15 +205,15 @@ export const Stats: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600">
+            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600 transition-shadow hover:shadow-md">
               <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{weeklyTotal}</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">本周打卡</div>
             </div>
-            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600">
+            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600 transition-shadow hover:shadow-md">
               <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{weeklyAvg}</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">日均打卡</div>
             </div>
-            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600">
+            <div className="text-center p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-600 transition-shadow hover:shadow-md">
               <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{completedDays}/7</div>
               <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">打卡天数</div>
             </div>

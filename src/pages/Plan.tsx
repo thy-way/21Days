@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { usePlanStore } from "@/store";
+import { usePlanStore, useToastStore } from "@/store";
 import {
   Brain,
   Plus,
@@ -36,6 +36,7 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
   onClose,
 }) => {
   const { createPlan } = usePlanStore();
+  const toast = useToastStore((s) => s.toast);
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -72,8 +73,8 @@ const AIGenerateDialog: React.FC<AIGenerateDialogProps> = ({
       const result = await generateAIPlan(selectedCategory, answers);
       setGenerated(result);
       setStep(3);
-    } catch (err: any) {
-      alert('生成失败：' + (err.message || '未知错误'));
+    } catch {
+      toast('AI 生成失败，请稍后重试', 'error');
     } finally {
       setGenerating(false);
     }

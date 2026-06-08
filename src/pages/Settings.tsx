@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useSettingsStore, useCheckInStore, useAuthStore, DEFAULT_AVATARS } from '@/store';
+import { useSettingsStore, useCheckInStore, useAuthStore, useToastStore, DEFAULT_AVATARS } from '@/store';
 import { Dialog } from '@/components/ui/Dialog';
 import { Switch } from '@/components/ui/Switch';
 import { CATEGORY_STYLES } from '@/utils/categoryStyles';
@@ -22,6 +22,7 @@ export const Settings: React.FC = () => {
   const { profile, logout, updateProfile, setAvatar } = useAuthStore();
   const navigate = useNavigate();
 
+  const toast = useToastStore((s) => s.toast);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -54,8 +55,8 @@ export const Settings: React.FC = () => {
       a.download = `21days-backup-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Export failed:', error);
+    } catch {
+      toast('导出失败，请重试', 'error');
     }
     setExporting(false);
   };
@@ -72,10 +73,10 @@ export const Settings: React.FC = () => {
       try {
         const text = await file.text();
         await importData(text);
-        alert('导入成功！');
+        toast('导入成功', 'success');
         window.location.reload();
-      } catch (error) {
-        alert('导入失败，请检查文件格式');
+      } catch {
+        toast('导入失败，请检查文件格式', 'error');
       }
       setImporting(false);
     };

@@ -170,16 +170,24 @@ export const Home: React.FC = () => {
             <span className="ml-auto text-xs font-normal text-amber-500 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/20 px-2 py-0.5 rounded-full">优先管理</span>
           </h2>
 
-          <div className="grid grid-cols-2 gap-3">
-            <QuadrantCell quadrantId="urgent-important" icon="AlertTriangle" title="重要紧急" desc="立即处理" headerBg="bg-red-50"
-              renderTasks={renderQuadrantTasks} />
-            <QuadrantCell quadrantId="urgent-not-important" icon="Zap" title="紧急不重要" desc="尽快处理" headerBg="bg-orange-50"
-              renderTasks={renderQuadrantTasks} />
-            <QuadrantCell quadrantId="not-urgent-important" icon="Target" title="重要不紧急" desc="规划安排" headerBg="bg-amber-50"
-              renderTasks={renderQuadrantTasks} />
-            <QuadrantCell quadrantId="not-urgent-not-important" icon="Minus" title="不重要不紧急" desc="减少或删除" headerBg="bg-gray-50"
-              renderTasks={renderQuadrantTasks} />
-          </div>
+          {totalTasks === 0 ? (
+            <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
+              <Target className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+              <h3 className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-1">还没有学习计划</h3>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">先去「计划」页创建你的第一个计划，任务将在这里按四象限展示</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <QuadrantCell quadrantId="urgent-important" icon="AlertTriangle" title="重要紧急" desc="立即处理" headerBg="bg-red-50"
+                renderTasks={renderQuadrantTasks} />
+              <QuadrantCell quadrantId="urgent-not-important" icon="Zap" title="紧急不重要" desc="尽快处理" headerBg="bg-orange-50"
+                renderTasks={renderQuadrantTasks} />
+              <QuadrantCell quadrantId="not-urgent-important" icon="Target" title="重要不紧急" desc="规划安排" headerBg="bg-amber-50"
+                renderTasks={renderQuadrantTasks} />
+              <QuadrantCell quadrantId="not-urgent-not-important" icon="Minus" title="不重要不紧急" desc="减少或删除" headerBg="bg-gray-50"
+                renderTasks={renderQuadrantTasks} />
+            </div>
+          )}
         </div>
 
       </div>

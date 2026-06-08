@@ -4,6 +4,7 @@ import { Sun, Moon, Download } from 'lucide-react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { BottomNav } from './BottomNav';
+import { Toast } from './Toast';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -57,6 +58,7 @@ export const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/20 to-white dark:from-gray-950 dark:via-slate-900/50 dark:to-gray-950 flex flex-col">
+      <Toast />
       <button
         onClick={toggleTheme}
         aria-label={theme === 'dark' ? '切换到日间模式' : '切换到夜间模式'}
@@ -69,7 +71,9 @@ export const Layout: React.FC = () => {
         )}
       </button>
       <main className="flex-1 pb-20">
-        <Outlet />
+        <div className="animate-fade-in">
+          <Outlet />
+        </div>
       </main>
       <BottomNav />
 

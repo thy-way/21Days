@@ -1,12 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Download } from 'lucide-react';
+import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { BottomNav } from './BottomNav';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 export const Layout: React.FC = () => {
   const theme = useSettingsStore((state) => state.settings.theme);
   const setTheme = useSettingsStore((state) => state.setTheme);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installed, setInstalled] = useState(false);
+
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW({
+    onRegistered(registration) {
+      if (registration) {
+        setInterval(() => {
+          registration.update();
+        }, 60 * 60 * 1000);
+      }
+    },
+  });
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', () => {
+      setInstallPrompt(null);
+      setInstalled(true);
+    });
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') setInstallPrompt(null);
+  };
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -29,6 +72,49 @@ export const Layout: React.FC = () => {
         <Outlet />
       </main>
       <BottomNav />
+
+      {installPrompt && !installed && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 max-w-sm w-[calc(100%-2rem)] bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-500/40 shadow-lg rounded-2xl px-4 py-3 flex items-center gap-3">
+          <Download className="w-5 h-5 text-orange-500 shrink-0" />
+          <span className="text-sm text-gray-700 dark:text-gray-200 flex-1">
+            安装 21Days 到主屏幕
+          </span>
+          <button
+            onClick={handleInstall}
+            className="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            安装
+          </button>
+          <button
+            onClick={() => setInstallPrompt(null)}
+            aria-label="关闭"
+            className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {needRefresh && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 max-w-sm w-[calc(100%-2rem)] bg-white dark:bg-slate-800 border border-orange-200 dark:border-orange-500/40 shadow-lg rounded-2xl px-4 py-3 flex items-center gap-3">
+          <span className="text-sm text-gray-700 dark:text-gray-200 flex-1">
+            有新版本可用
+          </span>
+          <button
+            onClick={() => updateServiceWorker(true)}
+            className="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            刷新
+          </button>
+          <button
+            onClick={() => setNeedRefresh(false)}
+            aria-label="关闭"
+            className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 };
